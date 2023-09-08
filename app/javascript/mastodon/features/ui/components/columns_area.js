@@ -23,6 +23,7 @@ import ComposePanel from './compose_panel';
 import NavigationPanel from './navigation_panel';
 import { supportsPassiveEvents } from 'detect-passive-events';
 import { scrollRight } from '../../../scroll';
+import ComposeFormContainer from 'mastodon/features/compose/containers/compose_form_container';
 
 const componentMap = {
   'COMPOSE': Compose,
@@ -43,6 +44,7 @@ export default class ColumnsArea extends ImmutablePureComponent {
 
   static contextTypes = {
     router: PropTypes.object.isRequired,
+    identity: PropTypes.object.isRequired,
   };
 
   static propTypes = {
@@ -136,6 +138,7 @@ export default class ColumnsArea extends ImmutablePureComponent {
   render () {
     const { columns, children, singleColumn, isModalOpen } = this.props;
     const { renderComposePanel } = this.state;
+    const { signedIn } = this.context.identity;
 
     if (singleColumn) {
       return (
@@ -147,6 +150,11 @@ export default class ColumnsArea extends ImmutablePureComponent {
           </div>
 
           <div className='columns-area__panels__main'>
+            {signedIn && (
+              <React.Fragment>
+                <ComposeFormContainer singleColumn />
+              </React.Fragment>
+            )}
             <div className='tabs-bar__wrapper'><div id='tabs-bar__portal' /></div>
             <div className='columns-area columns-area--mobile'>{children}</div>
           </div>
