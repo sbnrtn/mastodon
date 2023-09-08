@@ -1503,6 +1503,7 @@ ja:
     title: '%{name}: "%{quote}"'
     visibilities:
       direct: ダイレクト
+      direct_long: ダイレクト
       private: フォロワー限定
       private_long: フォロワーにのみ表示されます
       public: 公開
