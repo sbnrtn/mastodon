@@ -45,16 +45,6 @@ const WarningWrapper = ({ needsLockWarning, hashtagWarning, directMessageWarning
     return <Warning message={<FormattedMessage id='compose_form.hashtag_warning' defaultMessage="This post won't be listed under any hashtag as it is unlisted. Only public posts can be searched by hashtag." />} />;
   }
 
-  if (directMessageWarning) {
-    const message = (
-      <span>
-        <FormattedMessage id='compose_form.encryption_warning' defaultMessage='Posts on Mastodon are not end-to-end encrypted. Do not share any dangerous information over Mastodon.' /> <a href='/terms' target='_blank'><FormattedMessage id='compose_form.direct_message_warning_learn_more' defaultMessage='Learn more' /></a>
-      </span>
-    );
-
-    return <Warning message={message} />;
-  }
-
   return null;
 };
 
