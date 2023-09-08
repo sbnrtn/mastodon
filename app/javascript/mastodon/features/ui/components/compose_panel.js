@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import SearchContainer from 'mastodon/features/compose/containers/search_container';
 import NavigationContainer from 'mastodon/features/compose/containers/navigation_container';
 import LinkFooter from './link_footer';
 import ServerBanner from 'mastodon/components/server_banner';
