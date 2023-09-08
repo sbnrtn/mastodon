@@ -18,6 +18,7 @@ module StatusesHelper
     end
   end
 
+  # rubocop:disable Layout/LineLength
   def media_summary(status)
     attachments = { image: 0, video: 0, audio: 0 }
 
@@ -37,6 +38,7 @@ module StatusesHelper
 
     I18n.t('statuses.attached.description', attached: text)
   end
+  # rubocop:enable Layout/LineLength
 
   def status_text_summary(status)
     return if status.spoiler_text.blank?
@@ -51,14 +53,14 @@ module StatusesHelper
   end
 
   def status_description(status)
-    components = [[media_summary(status), status_text_summary(status)].reject(&:blank?).join(' · ')]
+    components = [[media_summary(status), status_text_summary(status)].compact_blank.join(' · ')]
 
     if status.spoiler_text.blank?
       components << status.text
       components << poll_summary(status)
     end
 
-    components.reject(&:blank?).join("\n\n")
+    components.compact_blank.join("\n\n")
   end
 
   def stream_link_target
@@ -101,7 +103,7 @@ module StatusesHelper
     when 'private'
       fa_icon 'lock fw'
     when 'direct'
-      fa_icon 'at fw'
+      fa_icon 'envelope-o fw'
     end
   end
 
@@ -164,7 +166,9 @@ module StatusesHelper
     component_params = {
       sensitive: sensitized?(status, current_account),
       autoplay: prefers_autoplay?,
-      media: status.ordered_media_attachments.map { |a| ActiveModelSerializers::SerializableResource.new(a, serializer: REST::MediaAttachmentSerializer).as_json },
+      media: status.ordered_media_attachments.map do |a|
+               ActiveModelSerializers::SerializableResource.new(a, serializer: REST::MediaAttachmentSerializer).as_json
+             end,
     }.merge(**options)
 
     react_component :media_gallery, component_params do
@@ -185,7 +189,8 @@ module StatusesHelper
   def render_poll_component(status, **options)
     component_params = {
       disabled: true,
-      poll: ActiveModelSerializers::SerializableResource.new(status.preloadable_poll, serializer: REST::PollSerializer, scope: current_user, scope_name: :current_user).as_json,
+      poll: ActiveModelSerializers::SerializableResource.new(status.preloadable_poll, serializer: REST::PollSerializer,
+scope: current_user, scope_name: :current_user).as_json,
     }.merge(**options)
 
     react_component :poll, component_params do

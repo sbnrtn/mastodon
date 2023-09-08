@@ -82,10 +82,12 @@ module ApplicationHelper
     end
   end
 
+  # rubocop:disable Layout/LineLength
   def provider_sign_in_link(provider)
     label = Devise.omniauth_configs[provider]&.strategy&.display_name.presence || I18n.t("auth.providers.#{provider}", default: provider.to_s.chomp('_oauth2').capitalize)
     link_to label, omniauth_authorize_path(:user, provider), class: "button button-#{provider}", method: :post
   end
+  # rubocop:enable Layout/LineLength
 
   def locale_direction
     if RTL_LOCALES.include?(I18n.locale)
@@ -111,7 +113,7 @@ module ApplicationHelper
   def fa_icon(icon, attributes = {})
     class_names = attributes[:class]&.split(' ') || []
     class_names << 'fa'
-    class_names += icon.split(' ').map { |cl| "fa-#{cl}" }
+    class_names += icon.split.map { |cl| "fa-#{cl}" }
 
     content_tag(:i, nil, attributes.merge(class: class_names.join(' ')))
   end
@@ -124,7 +126,7 @@ module ApplicationHelper
     elsif status.private_visibility? || status.limited_visibility?
       fa_icon('lock', title: I18n.t('statuses.visibilities.private'))
     elsif status.direct_visibility?
-      fa_icon('at', title: I18n.t('statuses.visibilities.direct'))
+      fa_icon('envelope-o', title: I18n.t('statuses.visibilities.direct'))
     end
   end
 
@@ -142,7 +144,8 @@ module ApplicationHelper
     if prefers_autoplay?
       image_tag(custom_emoji.image.url, class: 'emojione', alt: ":#{custom_emoji.shortcode}:")
     else
-      image_tag(custom_emoji.image.url(:static), class: 'emojione custom-emoji', alt: ":#{custom_emoji.shortcode}", 'data-original' => full_asset_url(custom_emoji.image.url), 'data-static' => full_asset_url(custom_emoji.image.url(:static)))
+      image_tag(custom_emoji.image.url(:static), :class => 'emojione custom-emoji', :alt => ":#{custom_emoji.shortcode}",
+'data-original' => full_asset_url(custom_emoji.image.url), 'data-static' => full_asset_url(custom_emoji.image.url(:static)))
     end
   end
 
@@ -163,12 +166,12 @@ module ApplicationHelper
   end
 
   def body_classes
-    output = (@body_classes || '').split(' ')
+    output = (@body_classes || '').split
     output << "theme-#{current_theme.parameterize}"
     output << 'system-font' if current_account&.user&.setting_system_font_ui
     output << (current_account&.user&.setting_reduce_motion ? 'reduce-motion' : 'no-reduce-motion')
     output << 'rtl' if locale_direction == 'rtl'
-    output.reject(&:blank?).join(' ')
+    output.compact_blank.join(' ')
   end
 
   def cdn_host
@@ -180,7 +183,7 @@ module ApplicationHelper
   end
 
   def storage_host
-    "https://#{ENV['S3_ALIAS_HOST'].presence || ENV['S3_CLOUDFRONT_HOST']}"
+    "https://#{ENV['S3_ALIAS_HOST'].presence || ENV.fetch('S3_CLOUDFRONT_HOST', nil)}"
   end
 
   def storage_host?
@@ -220,7 +223,8 @@ module ApplicationHelper
       state_params[:owner] = Account.local.without_suspended.where('id > 0').first
     end
 
-    json = ActiveModelSerializers::SerializableResource.new(InitialStatePresenter.new(state_params), serializer: InitialStateSerializer).to_json
+    json = ActiveModelSerializers::SerializableResource.new(InitialStatePresenter.new(state_params),
+                                                            serializer: InitialStateSerializer).to_json
     # rubocop:disable Rails/OutputSafety
     content_tag(:script, json_escape(json).html_safe, id: 'initial-state', type: 'application/json')
     # rubocop:enable Rails/OutputSafety
