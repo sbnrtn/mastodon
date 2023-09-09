@@ -9,9 +9,6 @@ import classNames from 'classnames';
 import Icon from 'mastodon/components/icon';
 import IconButton from 'mastodon/components/icon_button';
 import Avatar from 'mastodon/components/avatar';
-import { counterRenderer } from 'mastodon/components/common_counter';
-import ShortNumber from 'mastodon/components/short_number';
-import { NavLink } from 'react-router-dom';
 import DropdownMenuContainer from 'mastodon/containers/dropdown_menu_container';
 import AccountNoteContainer from '../containers/account_note_container';
 import FollowRequestNoteContainer from '../containers/follow_request_note_container';
@@ -382,29 +379,6 @@ class Header extends ImmutablePureComponent {
                     </dl>
                   ))}
                 </div>
-              </div>
-
-              <div className='account__header__extra__links'>
-                <NavLink isActive={this.isStatusesPageActive} activeClassName='active' to={`/@${account.get('acct')}`} title={intl.formatNumber(account.get('statuses_count'))}>
-                  <ShortNumber
-                    value={account.get('statuses_count')}
-                    renderer={counterRenderer('statuses')}
-                  />
-                </NavLink>
-
-                <NavLink exact activeClassName='active' to={`/@${account.get('acct')}/following`} title={intl.formatNumber(account.get('following_count'))}>
-                  <ShortNumber
-                    value={account.get('following_count')}
-                    renderer={counterRenderer('following')}
-                  />
-                </NavLink>
-
-                <NavLink exact activeClassName='active' to={`/@${account.get('acct')}/followers`} title={intl.formatNumber(account.get('followers_count'))}>
-                  <ShortNumber
-                    value={account.get('followers_count')}
-                    renderer={counterRenderer('followers')}
-                  />
-                </NavLink>
               </div>
             </div>
           )}
