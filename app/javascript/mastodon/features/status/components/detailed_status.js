@@ -5,7 +5,6 @@ import Avatar from '../../../components/avatar';
 import DisplayName from '../../../components/display_name';
 import StatusContent from '../../../components/status_content';
 import MediaGallery from '../../../components/media_gallery';
-import { Link } from 'react-router-dom';
 import { injectIntl, defineMessages, FormattedDate } from 'react-intl';
 import Card from './card';
 import ImmutablePureComponent from 'react-immutable-pure-component';
@@ -14,7 +13,6 @@ import Audio from '../../audio';
 import scheduleIdleTask from '../../ui/util/schedule_idle_task';
 import classNames from 'classnames';
 import Icon from 'mastodon/components/icon';
-import AnimatedNumber from 'mastodon/components/animated_number';
 import PictureInPicturePlaceholder from 'mastodon/components/picture_in_picture_placeholder';
 import EditedTimestamp from 'mastodon/components/edited_timestamp';
 
@@ -120,9 +118,6 @@ class DetailedStatus extends ImmutablePureComponent {
 
     let media           = '';
     let applicationLink = '';
-    let reblogLink = '';
-    let reblogIcon = 'retweet';
-    let favouriteLink = '';
     let edited = '';
 
     if (this.props.measureHeight) {
@@ -201,54 +196,6 @@ class DetailedStatus extends ImmutablePureComponent {
     const visibilityIcon = visibilityIconInfo[status.get('visibility')];
     const visibilityLink = <React.Fragment> · <Icon id={visibilityIcon.icon} title={visibilityIcon.text} /></React.Fragment>;
 
-    if (['private', 'direct'].includes(status.get('visibility'))) {
-      reblogLink = '';
-    } else if (this.context.router) {
-      reblogLink = (
-        <React.Fragment>
-          <React.Fragment> · </React.Fragment>
-          <Link to={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}/reblogs`} className='detailed-status__link'>
-            <Icon id={reblogIcon} />
-            <span className='detailed-status__reblogs'>
-              <AnimatedNumber value={status.get('reblogs_count')} />
-            </span>
-          </Link>
-        </React.Fragment>
-      );
-    } else {
-      reblogLink = (
-        <React.Fragment>
-          <React.Fragment> · </React.Fragment>
-          <a href={`/interact/${status.get('id')}?type=reblog`} className='detailed-status__link' onClick={this.handleModalLink}>
-            <Icon id={reblogIcon} />
-            <span className='detailed-status__reblogs'>
-              <AnimatedNumber value={status.get('reblogs_count')} />
-            </span>
-          </a>
-        </React.Fragment>
-      );
-    }
-
-    if (this.context.router) {
-      favouriteLink = (
-        <Link to={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}/favourites`} className='detailed-status__link'>
-          <Icon id='star' />
-          <span className='detailed-status__favorites'>
-            <AnimatedNumber value={status.get('favourites_count')} />
-          </span>
-        </Link>
-      );
-    } else {
-      favouriteLink = (
-        <a href={`/interact/${status.get('id')}?type=favourite`} className='detailed-status__link' onClick={this.handleModalLink}>
-          <Icon id='star' />
-          <span className='detailed-status__favorites'>
-            <AnimatedNumber value={status.get('favourites_count')} />
-          </span>
-        </a>
-      );
-    }
-
     if (status.get('edited_at')) {
       edited = (
         <React.Fragment>
@@ -278,7 +225,7 @@ class DetailedStatus extends ImmutablePureComponent {
           <div className='detailed-status__meta'>
             <a className='detailed-status__datetime' href={`/@${status.getIn(['account', 'acct'])}\/${status.get('id')}`} target='_blank' rel='noopener noreferrer'>
               <FormattedDate value={new Date(status.get('created_at'))} hour12={false} year='numeric' month='short' day='2-digit' hour='2-digit' minute='2-digit' />
-            </a>{edited}{visibilityLink}{applicationLink}{reblogLink} · {favouriteLink}
+            </a>{edited}{visibilityLink}{applicationLink}
           </div>
         </div>
       </div>
