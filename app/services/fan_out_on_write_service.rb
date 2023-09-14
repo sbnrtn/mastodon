@@ -44,6 +44,7 @@ class FanOutOnWriteService < BaseService
     when :public, :unlisted, :private
       deliver_to_all_followers!
       deliver_to_lists!
+    when :limitedprofile
     when :limited
       deliver_to_mentioned_followers!
     else

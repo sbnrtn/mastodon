@@ -71,6 +71,27 @@ RSpec.describe FanOutOnWriteService, type: :service do
     end
   end
 
+  context 'when status is limitedprofile' do
+    let(:visibility) { 'limitedprofile' }
+
+    it 'is added to the home feed of its author' do
+      expect(home_feed_of(alice)).to include status.id
+    end
+
+    it 'is not added to the home feed of the mentioned follower' do
+      expect(home_feed_of(bob)).to_not include status.id
+    end
+
+    it 'is not added to the home feed of the other follower' do
+      expect(home_feed_of(tom)).to_not include status.id
+    end
+
+    it 'is not broadcast publicly' do
+      expect(redis).to_not have_received(:publish).with('timeline:hashtag:hoge', anything)
+      expect(redis).to_not have_received(:publish).with('timeline:public', anything)
+    end
+  end
+
   context 'when status is private' do
     let(:visibility) { 'private' }
 

@@ -54,6 +54,7 @@ export const defaultMediaVisibility = (status) => {
 const messages = defineMessages({
   public_short: { id: 'privacy.public.short', defaultMessage: 'Public' },
   unlisted_short: { id: 'privacy.unlisted.short', defaultMessage: 'Unlisted' },
+  limitedprofile_short: { id: 'privacy.limitedprofile.short', defaultMessage: 'Limited Profile' },
   private_short: { id: 'privacy.private.short', defaultMessage: 'Followers-only' },
   direct_short: { id: 'privacy.direct.short', defaultMessage: 'Mentioned people only' },
   edited: { id: 'status.edited', defaultMessage: 'Edited {date}' },
@@ -498,6 +499,7 @@ class Status extends ImmutablePureComponent {
     const visibilityIconInfo = {
       'public': { icon: 'globe', text: intl.formatMessage(messages.public_short) },
       'unlisted': { icon: 'unlock', text: intl.formatMessage(messages.unlisted_short) },
+      'limitedprofile': { icon: 'user', text: intl.formatMessage(messages.limitedprofile_short) },
       'private': { icon: 'lock', text: intl.formatMessage(messages.private_short) },
       'direct': { icon: 'envelope-o', text: intl.formatMessage(messages.direct_short) },
     };
