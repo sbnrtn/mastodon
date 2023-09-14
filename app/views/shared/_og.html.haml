@@ -2,6 +2,7 @@
 - description ||= @instance_presenter.description.presence || strip_tags(t('about.about_mastodon_html'))
 
 %meta{ name: 'description', content: description }/
+%meta{ name: 'noindex', content: 'robot' }/
 
 = opengraph 'og:site_name', t('about.hosted_on', domain: site_hostname)
 = opengraph 'og:url', url_for(only_path: false)
