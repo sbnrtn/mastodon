@@ -1506,6 +1506,8 @@ ja:
       direct_long: ダイレクト
       private: フォロワー限定
       private_long: フォロワーにのみ表示されます
+      limitedprofile: プロフィールのみ
+      limitedprofile_long: プロフィールにのみ表示されます
       public: 公開
       public_long: 誰でも見ることができ、かつ公開タイムラインに表示されます
       unlisted: 未収載

@@ -236,8 +236,8 @@ class StatusActionBar extends ImmutablePureComponent {
     const { signedIn, permissions } = this.context.identity;
 
     const anonymousAccess    = !signedIn;
-    const publicStatus       = ['public', 'unlisted'].includes(status.get('visibility'));
-    const pinnableStatus     = ['public', 'unlisted', 'private'].includes(status.get('visibility'));
+    const publicStatus       = ['public', 'unlisted', 'limitedprofile'].includes(status.get('visibility'));
+    const pinnableStatus     = ['public', 'unlisted', 'private', 'limitedprofile'].includes(status.get('visibility'));
     const mutingConversation = status.get('muted');
     const account            = status.get('account');
     const writtenByMe        = status.getIn(['account', 'id']) === me;

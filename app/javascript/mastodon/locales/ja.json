@@ -457,6 +457,8 @@
   "privacy.direct.short": "指定された相手のみ",
   "privacy.private.long": "フォロワーのみ閲覧可",
   "privacy.private.short": "フォロワーのみ",
+  "privacy.limitedprofile.long": "プロフィールのみ表示",
+  "privacy.limitedprofile.short": "プロフィールのみ",
   "privacy.public.long": "誰でも閲覧可",
   "privacy.public.short": "公開",
   "privacy.unlisted.long": "誰でも閲覧可、サイレント",
