@@ -81,9 +81,12 @@ const messages = defineMessages({
   uploadErrorPoll:  { id: 'upload_error.poll', defaultMessage: 'File upload not allowed with polls.' },
 });
 
-export const ensureComposeIsVisible = (getState, routerHistory) => {
+export const ensureComposeIsVisible = (
+  getState,
+  routerHistory // eslint-disable-line no-unused-vars, comma-dangle
+) => {
   if (!getState().getIn(['compose', 'mounted'])) {
-    routerHistory.push('/publish');
+    // routerHistory.push('/publish');
   }
 };
 

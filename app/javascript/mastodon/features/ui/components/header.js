@@ -37,14 +37,13 @@ class Header extends React.PureComponent {
 
   render () {
     const { signedIn } = this.context.identity;
-    const { location, openClosedRegistrationsModal } = this.props;
+    const { openClosedRegistrationsModal } = this.props;
 
     let content;
 
     if (signedIn) {
       content = (
         <>
-          {location.pathname !== '/publish' && <Link to='/publish' className='button'><FormattedMessage id='compose_form.publish_form' defaultMessage='Publish' /></Link>}
           <Account />
         </>
       );
