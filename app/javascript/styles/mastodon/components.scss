@@ -2632,7 +2632,7 @@ $ui-header-height: 55px;
 }
 
 .explore__search-header {
-  display: none;
+  display: flex;
 }
 
 @media screen and (max-width: $no-gap-breakpoint - 1px) {
