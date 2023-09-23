@@ -107,7 +107,7 @@ class ActivityPub::ProcessAccountService < BaseService
   end
 
   def set_immediate_attributes!
-    @account.featured_collection_url = @json['featured'] || ''
+    @account.featured_collection_url = ''
     @account.devices_url             = @json['devices'] || ''
     @account.display_name            = @json['name'] || ''
     @account.note                    = @json['summary'] || ''
