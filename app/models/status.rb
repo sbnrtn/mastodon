@@ -61,6 +61,7 @@ class Status < ApplicationRecord
   belongs_to :reblog, foreign_key: 'reblog_of_id', class_name: 'Status', inverse_of: :reblogs, optional: true
 
   has_many :favourites, inverse_of: :status, dependent: :destroy
+  has_many :emoji_reactions, inverse_of: :status, dependent: :destroy
   has_many :bookmarks, inverse_of: :status, dependent: :destroy
   has_many :reblogs, foreign_key: 'reblog_of_id', class_name: 'Status', inverse_of: :reblog, dependent: :destroy
   has_many :reblogged_by_accounts, through: :reblogs, class_name: 'Account', source: :account
@@ -69,6 +70,7 @@ class Status < ApplicationRecord
   has_many :mentioned_accounts, through: :mentions, source: :account, class_name: 'Account'
   has_many :active_mentions, -> { active }, class_name: 'Mention', inverse_of: :status
   has_many :media_attachments, dependent: :nullify
+  has_many :local_emoji_reacted, -> { merge(Account.local) }, through: :emoji_reactions, source: :account
 
   has_and_belongs_to_many :tags
   has_and_belongs_to_many :preview_cards
@@ -279,12 +281,61 @@ class Status < ApplicationRecord
     status_stat&.favourites_count || 0
   end
 
+  def emoji_reactions_count
+    status_stat&.emoji_reactions_count || 0
+  end
+
+  def emoji_reaction_accounts_count
+    status_stat&.emoji_reaction_accounts_count || 0
+  end
+
+
   def increment_count!(key)
     update_status_stat!(key => public_send(key) + 1)
   end
 
   def decrement_count!(key)
     update_status_stat!(key => [public_send(key) - 1, 0].max)
+  end
+
+  def emoji_reactions_grouped_by_name(account = nil, **options)
+    return [] if account.nil? && !options[:force]
+
+    (Oj.load(status_stat&.emoji_reactions || '', mode: :strict) || []).tap do |emoji_reactions|
+      if account.present?
+        public_emoji_reactions = []
+
+        emoji_reactions.each do |emoji_reaction|
+          emoji_reaction['me'] = emoji_reaction['account_ids'].include?(account.id.to_s)
+          emoji_reaction['account_ids'] -= account.excluded_from_timeline_account_ids.map(&:to_s)
+
+          accounts = Account.where(id: emoji_reaction['account_ids'], silenced_at: nil, suspended_at: nil)
+          accounts = accounts.where('domain IS NULL OR domain NOT IN (?)', account.excluded_from_timeline_domains) if account.excluded_from_timeline_domains.size.positive?
+          emoji_reaction['account_ids'] = accounts.pluck(:id).map(&:to_s)
+
+          emoji_reaction['count'] = emoji_reaction['account_ids'].size
+          public_emoji_reactions << emoji_reaction if (emoji_reaction['count']).positive?
+        end
+
+        public_emoji_reactions
+      end
+    end
+  end
+
+  def generate_emoji_reactions_grouped_by_name
+    records = emoji_reactions.group(:name).order(Arel.sql('MIN(created_at) ASC')).select('name, min(custom_emoji_id) as custom_emoji_id, count(*) as count, array_agg(account_id::text order by created_at) as account_ids')
+    Oj.dump(ActiveModelSerializers::SerializableResource.new(records, each_serializer: REST::EmojiReactionsGroupedByNameSerializer, scope: nil, scope_name: :current_user))
+  end
+
+  def refresh_emoji_reactions_grouped_by_name!
+    generate_emoji_reactions_grouped_by_name.tap do |emoji_reactions_json|
+      update_status_stat!(emoji_reactions: emoji_reactions_json, emoji_reactions_count: emoji_reactions.size, emoji_reaction_accounts_count: emoji_reactions.map(&:account_id).uniq.size)
+    end
+  end
+
+  def generate_emoji_reactions_grouped_by_account
+    # TODO: for serializer
+    EmojiReaction.where(status_id: id).group_by(&:account)
   end
 
   def trendable?
@@ -342,6 +393,14 @@ class Status < ApplicationRecord
 
     def pins_map(status_ids, account_id)
       StatusPin.select('status_id').where(status_id: status_ids).where(account_id: account_id).each_with_object({}) { |p, h| h[p.status_id] = true }
+    end
+
+    def emoji_reactions_map(status_ids, account_id)
+      EmojiReaction.select('status_id').where(status_id: status_ids).where(account_id: account_id).each_with_object({}) { |e, h| h[e.status_id] = true }
+    end
+
+    def emoji_reaction_allows_map(status_ids, account_id)
+      Status.where(id: status_ids).pluck(:account_id).uniq.index_with { |a| Account.find_by(id: a) }
     end
 
     def reload_stale_associations!(cached_items)
