@@ -15,12 +15,14 @@ import { MediaGallery, Video, Audio } from '../features/ui/util/async-components
 import { HotKeys } from 'react-hotkeys';
 import classNames from 'classnames';
 import Icon from 'mastodon/components/icon';
-import { displayMedia } from '../initial_state';
 import PictureInPicturePlaceholder from 'mastodon/components/picture_in_picture_placeholder';
+import { createSelector } from 'reselect';
 
 // We use the component (and not the container) since we do not want
 // to use the progress bar to show download progress
 import Bundle from '../features/ui/components/bundle';
+import { displayMedia, enableEmojiReaction, showEmojiReactionOnTimeline } from '../initial_state';
+import StatusEmojiReactionsBar from './status_emoji_reactions_bar';
 
 export const textForScreenReader = (intl, status, rebloggedByText = false) => {
   const displayName = status.getIn(['account', 'display_name']);
@@ -73,6 +75,8 @@ class Status extends ImmutablePureComponent {
     onClick: PropTypes.func,
     onReply: PropTypes.func,
     onFavourite: PropTypes.func,
+    onEmojiReact: PropTypes.func,
+    onUnEmojiReact: PropTypes.func,
     onReblog: PropTypes.func,
     onDelete: PropTypes.func,
     onDirect: PropTypes.func,
@@ -104,6 +108,7 @@ class Status extends ImmutablePureComponent {
       inUse: PropTypes.bool,
       available: PropTypes.bool,
     }),
+    withoutEmojiReactions: PropTypes.bool,
   };
 
   // Avoid checking props that are functions (and whose equality will always
@@ -506,6 +511,14 @@ class Status extends ImmutablePureComponent {
 
     const visibilityIcon = visibilityIconInfo[status.get('visibility')];
 
+    let emojiReactionsBar = null;
+    if (!this.props.withoutEmojiReactions && status.get('emoji_reactions')) {
+      const emojiReactions = status.get('emoji_reactions');
+      if (emojiReactions.size > 0 && enableEmojiReaction) {
+        emojiReactionsBar = <StatusEmojiReactionsBar emojiReactions={emojiReactions} myReactionOnly={!showEmojiReactionOnTimeline} status={status} onEmojiReact={this.props.onEmojiReact} onUnEmojiReact={this.props.onUnEmojiReact} />;
+      }
+    }
+
     return (
       <HotKeys handlers={handlers}>
         <div className={classNames('status__wrapper', `status__wrapper-${status.get('visibility')}`, { 'status__wrapper-reply': !!status.get('in_reply_to_id'), unread, focusable: !this.props.muted })} tabIndex={this.props.muted ? null : 0} data-featured={featured ? 'true' : null} aria-label={textForScreenReader(intl, status, rebloggedByText)} ref={this.handleRef}>
@@ -539,6 +552,7 @@ class Status extends ImmutablePureComponent {
 
             {media}
 
+            {emojiReactionsBar}
             <StatusActionBar scrollKey={scrollKey} status={status} account={account} onFilter={matchedFilters ? this.handleFilterClick : null} {...other} />
           </div>
         </div>

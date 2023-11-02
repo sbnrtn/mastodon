@@ -14,6 +14,8 @@ import Column from '../ui/components/column';
 import {
   favourite,
   unfavourite,
+  emojiReact,
+  unEmojiReact,
   bookmark,
   unbookmark,
   reblog,

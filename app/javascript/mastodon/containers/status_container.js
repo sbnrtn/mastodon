@@ -10,9 +10,11 @@ import {
 import {
   reblog,
   favourite,
+  emojiReact,
   bookmark,
   unreblog,
   unfavourite,
+  unEmojiReact,
   unbookmark,
   pin,
   unpin,
@@ -113,6 +115,14 @@ const mapDispatchToProps = (dispatch, { intl, contextType }) => ({
     } else {
       dispatch(favourite(status));
     }
+  },
+
+  onEmojiReact (status, emoji) {
+    dispatch(emojiReact(status, emoji));
+  },
+
+  onUnEmojiReact (status, emoji) {
+    dispatch(unEmojiReact(status, emoji));
   },
 
   onBookmark (status) {
