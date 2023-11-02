@@ -29,12 +29,29 @@ class EmojiReactService < BaseService
 
     raise Mastodon::ValidationError, I18n.t('reactions.errors.duplication') if emoji_reaction.nil?
 
+    create_notification(emoji_reaction)
+    notify_to_followers(emoji_reaction)
     write_stream(emoji_reaction)
 
     emoji_reaction
   end
 
   private
+
+  def create_notification(emoji_reaction)
+    status = emoji_reaction.status
+
+    if status.account.local?
+      LocalNotificationWorker.perform_async(status.account_id, emoji_reaction.id, 'EmojiReaction', 'emoji_reaction')
+    end
+  end
+
+  def notify_to_followers(emoji_reaction)
+    status = emoji_reaction.status
+
+    return unless status.account.local?
+    return if emoji_reaction.remote_custom_emoji?
+  end
 
   def write_stream(emoji_reaction)
     emoji_group = emoji_reaction.status.emoji_reactions_grouped_by_name(nil, force: true)
