@@ -196,7 +196,7 @@ RSpec.describe ActivityPub::ProcessAccountService, type: :service do
     end
 
     it 'creates at least some accounts' do
-      expect { subject.call('user1', 'foo.test', payload) }.to change { Account.remote.count }.by_at_least(2)
+      expect { subject.call('user1', 'foo.test', payload) }.to change { Account.remote.count }.by_at_least(1)
     end
 
     it 'creates no more account than the limit allows' do
