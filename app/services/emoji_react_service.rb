@@ -43,6 +43,8 @@ class EmojiReactService < BaseService
 
     if status.account.local?
       LocalNotificationWorker.perform_async(status.account_id, emoji_reaction.id, 'EmojiReaction', 'emoji_reaction')
+    elsif status.account.activitypub?
+      ActivityPub::DeliveryWorker.perform_async(build_json(emoji_reaction), emoji_reaction.account_id, status.account.inbox_url)
     end
   end
 
@@ -51,6 +53,8 @@ class EmojiReactService < BaseService
 
     return unless status.account.local?
     return if emoji_reaction.remote_custom_emoji?
+
+    ActivityPub::RawDistributionWorker.perform_async(build_json(emoji_reaction), status.account_id)
   end
 
   def write_stream(emoji_reaction)
@@ -58,6 +62,10 @@ class EmojiReactService < BaseService
                                 .find { |reaction_group| reaction_group['name'] == emoji_reaction.name && (!reaction_group.key?(:domain) || reaction_group['domain'] == emoji_reaction.custom_emoji&.domain) }
     emoji_group['status_id'] = emoji_reaction.status_id.to_s
     DeliveryEmojiReactionWorker.perform_async(render_emoji_reaction(emoji_group), emoji_reaction.status_id, emoji_reaction.account_id)
+  end
+
+  def build_json(emoji_reaction)
+    Oj.dump(serialize_payload(emoji_reaction, ActivityPub::EmojiReactionSerializer))
   end
 
   def render_emoji_reaction(emoji_group)

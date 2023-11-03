@@ -11,6 +11,8 @@ class UnEmojiReactService < BaseService
 
       @status.touch # rubocop:disable Rails/SkipsModelValidations
 
+      create_notification(emoji_reaction) if !@status.account.local? && @status.account.activitypub?
+      notify_to_followers(emoji_reaction) if @status.account.local?
       write_stream(emoji_reaction)
     else
       account = Account.find(account_id)
@@ -27,6 +29,14 @@ class UnEmojiReactService < BaseService
     end
   end
 
+  def create_notification(emoji_reaction)
+    ActivityPub::DeliveryWorker.perform_async(build_json(emoji_reaction), emoji_reaction.account_id, @status.account.inbox_url)
+  end
+
+  def notify_to_followers(emoji_reaction)
+    ActivityPub::RawDistributionWorker.perform_async(build_json(emoji_reaction), @status.account_id)
+  end
+
   def write_stream(emoji_reaction)
     emoji_group = @status.emoji_reactions_grouped_by_name
                          .find { |reaction_group| reaction_group['name'] == emoji_reaction.name && (!reaction_group.key?(:domain) || reaction_group['domain'] == emoji_reaction.custom_emoji&.domain) }
@@ -38,6 +48,10 @@ class UnEmojiReactService < BaseService
       emoji_group['domain'] = emoji_reaction.custom_emoji.domain if emoji_reaction.custom_emoji
     end
     DeliveryEmojiReactionWorker.perform_async(render_emoji_reaction(emoji_group), @status.id, emoji_reaction.account_id)
+  end
+
+  def build_json(emoji_reaction)
+    Oj.dump(serialize_payload(emoji_reaction, ActivityPub::UndoEmojiReactionSerializer))
   end
 
   def render_emoji_reaction(emoji_group)
