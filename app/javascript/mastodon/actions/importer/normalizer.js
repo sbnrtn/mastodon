@@ -134,15 +134,23 @@ export function normalizeStatusTranslation(translation, status) {
   return normalTranslation;
 }
 
-export function normalizePoll(poll) {
+export function normalizePoll(poll, normalOldPoll) {
   const normalPoll = { ...poll };
-  const emojiMap = makeEmojiMap(normalPoll);
+  const emojiMap = makeEmojiMap(poll.emojis);
 
-  normalPoll.options = poll.options.map((option, index) => ({
-    ...option,
-    voted: poll.own_votes && poll.own_votes.includes(index),
-    title_emojified: emojify(escapeTextContentForBrowser(option.title), emojiMap),
-  }));
+  normalPoll.options = poll.options.map((option, index) => {
+    const normalOption = {
+      ...option,
+      voted: poll.own_votes && poll.own_votes.includes(index),
+      titleHtml: emojify(escapeTextContentForBrowser(option.title), emojiMap),
+    };
+
+    if (normalOldPoll && normalOldPoll.getIn(['options', index, 'title']) === option.title) {
+      normalOption.translation = normalOldPoll.getIn(['options', index, 'translation']);
+    }
+
+    return normalOption;
+  });
 
   return normalPoll;
 }
