@@ -14,6 +14,8 @@ import Column from '../ui/components/column';
 import {
   favourite,
   unfavourite,
+  emojiReact,
+  unEmojiReact,
   bookmark,
   unbookmark,
   reblog,
@@ -246,12 +248,38 @@ class Status extends ImmutablePureComponent {
         dispatch(favourite(status));
       }
     } else {
-      dispatch(openModal('INTERACTION', {
-        type: 'favourite',
-        accountId: status.getIn(['account', 'id']),
-        url: status.get('url'),
+      dispatch(openModal({
+        modalType: 'INTERACTION',
+        modalProps: {
+          type: 'favourite',
+          accountId: status.getIn(['account', 'id']),
+          url: status.get('uri'),
+        },
       }));
     }
+  };
+
+  handleEmojiReact = (status, emoji) => {
+    const { dispatch } = this.props;
+    const { signedIn } = this.context.identity;
+
+    if (signedIn) {
+      dispatch(emojiReact(status, emoji));
+    } else {
+      dispatch(openModal({
+        modalType: 'INTERACTION',
+        modalProps: {
+          type: 'favourite',
+          accountId: status.getIn(['account', 'id']),
+          url: status.get('uri'),
+        },
+      }));
+    }
+  };
+
+  handleUnEmojiReact = (status, emoji) => {
+    const { dispatch } = this.props;
+    dispatch(unEmojiReact(status, emoji));
   };
 
   handlePin = (status) => {
@@ -644,6 +672,8 @@ class Status extends ImmutablePureComponent {
                   showMedia={this.state.showMedia}
                   onToggleMediaVisibility={this.handleToggleMediaVisibility}
                   pictureInPicture={pictureInPicture}
+                  onEmojiReact={this.handleEmojiReact}
+                  onUnEmojiReact={this.handleUnEmojiReact}
                 />
 
                 <ActionBar
@@ -651,6 +681,7 @@ class Status extends ImmutablePureComponent {
                   status={status}
                   onReply={this.handleReplyClick}
                   onFavourite={this.handleFavouriteClick}
+                  onEmojiReact={this.handleEmojiReact}
                   onReblog={this.handleReblogClick}
                   onBookmark={this.handleBookmarkClick}
                   onDelete={this.handleDeleteClick}

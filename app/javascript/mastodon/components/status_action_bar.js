@@ -9,6 +9,7 @@ import ImmutablePureComponent from 'react-immutable-pure-component';
 import { me } from '../initial_state';
 import classNames from 'classnames';
 import { PERMISSION_MANAGE_USERS, PERMISSION_MANAGE_FEDERATION } from 'mastodon/permissions';
+import EmojiPickerDropdown from '../features/compose/containers/emoji_picker_dropdown_container';
 
 const messages = defineMessages({
   delete: { id: 'status.delete', defaultMessage: 'Delete' },
@@ -27,6 +28,7 @@ const messages = defineMessages({
   cancel_reblog_private: { id: 'status.cancel_reblog_private', defaultMessage: 'Unboost' },
   cannot_reblog: { id: 'status.cannot_reblog', defaultMessage: 'This post cannot be boosted' },
   favourite: { id: 'status.favourite', defaultMessage: 'Favourite' },
+  emojiReaction: { id: 'status.emoji_reaction', defaultMessage: 'Stamp' },
   bookmark: { id: 'status.bookmark', defaultMessage: 'Bookmark' },
   removeBookmark: { id: 'status.remove_bookmark', defaultMessage: 'Remove bookmark' },
   open: { id: 'status.open', defaultMessage: 'Expand this status' },
@@ -67,6 +69,7 @@ class StatusActionBar extends ImmutablePureComponent {
     relationship: ImmutablePropTypes.map,
     onReply: PropTypes.func,
     onFavourite: PropTypes.func,
+    onEmojiReact: PropTypes.func,
     onReblog: PropTypes.func,
     onDelete: PropTypes.func,
     onDirect: PropTypes.func,
@@ -127,6 +130,18 @@ class StatusActionBar extends ImmutablePureComponent {
       this.props.onInteractionModal('favourite', this.props.status);
     }
   };
+
+  handleEmojiPick = (data) => {
+    const { signedIn } = this.context.identity;
+
+    if (signedIn) {
+      this.props.onEmojiReact(this.props.status, data);
+    } else {
+      this.props.onInteractionModal('favourite', this.props.status);
+    }
+  };
+
+  handleEmojiPickInnerButton = () => {};
 
   handleReblogClick = e => {
     const { signedIn } = this.context.identity;
@@ -349,12 +364,15 @@ class StatusActionBar extends ImmutablePureComponent {
       reblogTitle = intl.formatMessage(messages.cannot_reblog);
     }
 
-    const shareButton = ('share' in navigator) && publicStatus && (
-      <IconButton className='status__action-bar__button' title={intl.formatMessage(messages.share)} icon='share-alt' onClick={this.handleShareClick} />
-    );
-
     const filterButton = this.props.onFilter && (
       <IconButton className='status__action-bar__button' title={intl.formatMessage(messages.hide)} icon='eye' onClick={this.handleHideClick} />
+    );
+
+    const emojiPickerButton = (
+      <IconButton className='status__action-bar__button' title={intl.formatMessage(messages.emojiReaction)} icon='plus' onClick={this.handleEmojiPickInnerButton} />
+    );
+    const emojiPickerDropdown = (
+      <EmojiPickerDropdown onPickEmoji={this.handleEmojiPick} button={emojiPickerButton} />
     );
 
     return (
@@ -363,8 +381,7 @@ class StatusActionBar extends ImmutablePureComponent {
         <IconButton className={classNames('status__action-bar__button', { reblogPrivate })} disabled={!publicStatus && !reblogPrivate} active={status.get('reblogged')} title={reblogTitle} icon='retweet' onClick={this.handleReblogClick} counter={withCounters ? status.get('reblogs_count') : undefined} />
         <IconButton className='status__action-bar__button star-icon' animate active={status.get('favourited')} title={intl.formatMessage(messages.favourite)} icon='star' onClick={this.handleFavouriteClick} counter={withCounters ? status.get('favourites_count') : undefined} />
         <IconButton className='status__action-bar__button bookmark-icon' disabled={!signedIn} active={status.get('bookmarked')} title={intl.formatMessage(messages.bookmark)} icon='bookmark' onClick={this.handleBookmarkClick} />
-
-        {shareButton}
+        {emojiPickerDropdown}
 
         {filterButton}
 

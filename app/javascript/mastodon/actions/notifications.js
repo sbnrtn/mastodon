@@ -9,6 +9,7 @@ import {
 } from './importer';
 import { submitMarkers } from './markers';
 import { saveSettings } from './settings';
+import { STATUS_EMOJI_REACTION_UPDATE } from './statuses';
 import { defineMessages } from 'react-intl';
 import { List as ImmutableList } from 'immutable';
 import { unescapeHTML } from '../utils/html';
@@ -53,6 +54,15 @@ const fetchRelatedRelationships = (dispatch, notifications) => {
 export const loadPending = () => ({
   type: NOTIFICATIONS_LOAD_PENDING,
 });
+
+export function updateEmojiReactions(emoji_reaction, accountId) {
+  return (dispatch) =>
+    dispatch({
+      type: STATUS_EMOJI_REACTION_UPDATE,
+      emoji_reaction,
+      accountId,
+    });
+}
 
 export function updateNotifications(notification, intlMessages, intlLocale) {
   return (dispatch, getState) => {
@@ -127,6 +137,7 @@ const excludeTypesFromFilter = filter => {
     'follow',
     'follow_request',
     'favourite',
+    'emoji_reaction',
     'reblog',
     'mention',
     'poll',

@@ -1,11 +1,11 @@
 import escapeTextContentForBrowser from 'escape-html';
 import emojify from '../../features/emoji/emoji';
 import { unescapeHTML } from '../../utils/html';
-import { expandSpoilers } from '../../initial_state';
+import { expandSpoilers, me } from '../../initial_state';
 
 const domParser = new DOMParser();
 
-const makeEmojiMap = record => record.emojis.reduce((obj, emoji) => {
+const makeEmojiMap = emojis => emojis.reduce((obj, emoji) => {
   obj[`:${emoji.shortcode}:`] = emoji;
   return obj;
 }, {});
@@ -19,7 +19,7 @@ export function searchTextFromRawStatus (status) {
 export function normalizeAccount(account) {
   account = { ...account };
 
-  const emojiMap = makeEmojiMap(account);
+  const emojiMap = makeEmojiMap(account.emojis);
   const displayName = account.display_name.trim().length === 0 ? account.username : account.display_name;
 
   account.display_name_html = emojify(escapeTextContentForBrowser(displayName), emojiMap);
@@ -66,6 +66,14 @@ export function normalizeStatus(status, normalOldStatus) {
     normalStatus.filtered = status.filtered.map(normalizeFilterResult);
   }
 
+  if (status.emoji_reactions) {
+    normalStatus.emoji_reactions = normalizeEmojiReactions(status.emoji_reactions);
+  }
+
+  if (!status.visibility_ex) {
+    normalStatus.visibility_ex = status.visibility;
+  }
+
   // Only calculate these values when status first encountered and
   // when the underlying values change. Otherwise keep the ones
   // already in the reducer
@@ -83,9 +91,13 @@ export function normalizeStatus(status, normalOldStatus) {
       normalStatus.spoiler_text = '';
     }
 
+    if (normalStatus.emojis && normalStatus.emojis.some((emoji) => emoji.is_sensitive) && !normalStatus.spoiler_text) {
+      normalStatus.spoiler_text = '[Contains sensitive custom emoji(s)]';
+    }
+
     const spoilerText   = normalStatus.spoiler_text || '';
     const searchContent = ([spoilerText, status.content].concat((status.poll && status.poll.options) ? status.poll.options.map(option => option.title) : [])).concat(status.media_attachments.map(att => att.description)).join('\n\n').replace(/<br\s*\/?>/g, '\n').replace(/<\/p><p>/g, '\n\n');
-    const emojiMap      = makeEmojiMap(normalStatus);
+    const emojiMap      = makeEmojiMap(normalStatus.emojis);
 
     normalStatus.search_index = domParser.parseFromString(searchContent, 'text/html').documentElement.textContent;
     normalStatus.contentHtml  = emojify(normalStatus.content, emojiMap);
@@ -96,15 +108,49 @@ export function normalizeStatus(status, normalOldStatus) {
   return normalStatus;
 }
 
-export function normalizePoll(poll) {
-  const normalPoll = { ...poll };
-  const emojiMap = makeEmojiMap(normalPoll);
+export function normalizeEmojiReactions(emoji_reactions) {
+  const myAccountId = me;
+  let converted = [];
+  for (let emoji_reaction of emoji_reactions) {
+    let obj = emoji_reaction;
+    obj.me = obj.account_ids.some((id) => id === myAccountId);
+    converted.push(obj);
+  }
+  return converted;
+}
 
-  normalPoll.options = poll.options.map((option, index) => ({
-    ...option,
-    voted: poll.own_votes && poll.own_votes.includes(index),
-    title_emojified: emojify(escapeTextContentForBrowser(option.title), emojiMap),
-  }));
+export function normalizeStatusTranslation(translation, status) {
+  const emojiMap = makeEmojiMap(status.get('emojis').toJS());
+
+  const normalTranslation = {
+    detected_source_language: translation.detected_source_language,
+    language: translation.language,
+    provider: translation.provider,
+    contentHtml: emojify(translation.content, emojiMap),
+    spoilerHtml: emojify(escapeTextContentForBrowser(translation.spoiler_text), emojiMap),
+    spoiler_text: translation.spoiler_text,
+  };
+
+  return normalTranslation;
+}
+
+export function normalizePoll(poll, normalOldPoll) {
+  const normalPoll = { ...poll };
+  const emojiMap = makeEmojiMap(poll.emojis);
+
+  normalPoll.options = poll.options.map((option, index) => {
+    const normalOption = {
+      ...option,
+      voted: poll.own_votes && poll.own_votes.includes(index),
+      titleHtml: emojify(escapeTextContentForBrowser(option.title), emojiMap),
+    };
+
+    if (normalOldPoll && normalOldPoll.getIn(['options', index, 'title']) === option.title) {
+      normalOption.translation = normalOldPoll.getIn(['options', index, 'translation']);
+    }
+
+    return normalOption;
+  });
 
   return normalPoll;
 }
