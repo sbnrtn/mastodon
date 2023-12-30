@@ -380,7 +380,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     return @skip_download if defined?(@skip_download)
 
     reject = DomainBlock.reject_media?(@account.domain)
-    reject = !@account.following_anyone? unless reject
+    reject = (@account.passive_relationships.count == 0) unless reject
 
     @skip_download ||= reject
   end
