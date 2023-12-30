@@ -279,7 +279,11 @@ class ActivityPub::ProcessAccountService < BaseService
   end
 
   def skip_download?
-    @account.suspended? || domain_block&.reject_media?
+    reject = @account.suspended?
+    reject = domain_block&.reject_media? unless reject
+    reject = !@account.following_anyone? unless reject
+
+    reject
   end
 
   def auto_suspend?
