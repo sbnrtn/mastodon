@@ -379,7 +379,10 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
   def skip_download?
     return @skip_download if defined?(@skip_download)
 
-    @skip_download ||= DomainBlock.reject_media?(@account.domain)
+    reject = DomainBlock.reject_media?(@account.domain)
+    reject = (@account.passive_relationships.count == 0) unless reject
+
+    @skip_download ||= reject
   end
 
   def reply_to_local?
