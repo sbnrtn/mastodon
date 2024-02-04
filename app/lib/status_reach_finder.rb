@@ -24,13 +24,28 @@ class StatusReachFinder
   private
 
   def reached_account_inboxes
+    Account.where(id: reached_account_ids).inboxes
+  end
+
+  def reached_account_ids
     # When the status is a reblog, there are no interactions with it
     # directly, we assume all interactions are with the original one
 
     if @status.reblog?
-      []
+      [reblog_of_account_id]
     else
-      Account.where(id: reached_account_ids).inboxes
+      [
+        replied_to_account_id,
+        reblog_of_account_id,
+        mentioned_account_ids,
+        reblogs_account_ids,
+        favourites_account_ids,
+        replies_account_ids,
+      ].tap do |arr|
+        arr.flatten!
+        arr.compact!
+        arr.uniq!
+      end
     end
   end
 
@@ -41,21 +56,6 @@ class StatusReachFinder
       Account.where(id: mentioned_account_ids).where(domain: banned_domains_for_misskey).inboxes
     else
       Account.where(id: reached_account_ids).where(domain: banned_domains_for_misskey - friend_domains).inboxes
-    end
-  end
-
-  def reached_account_ids
-    [
-      replied_to_account_id,
-      reblog_of_account_id,
-      mentioned_account_ids,
-      reblogs_account_ids,
-      favourites_account_ids,
-      replies_account_ids,
-    ].tap do |arr|
-      arr.flatten!
-      arr.compact!
-      arr.uniq!
     end
   end
 
