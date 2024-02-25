@@ -56,7 +56,7 @@ jobs:
         # Previously had set this, but it's not supported
         # export NODE_OPTIONS=--openssl-legacy-provider
         run: |-
-          ./bin/rails assets:precompile
+          NODE_OPTIONS="--openssl-legacy-provider" bundle exec rake assets:precompile""
 
       - uses: actions/upload-artifact@v3
         if: matrix.mode == 'test'
