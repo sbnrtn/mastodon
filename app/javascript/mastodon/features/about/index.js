@@ -163,7 +163,7 @@ class About extends React.PureComponent {
               <p><FormattedMessage id='about.not_available' defaultMessage='This information has not been made available on this server.' /></p>
             ) : (
               <ol className='rules-list'>
-                {server.get('rules').map(rule => (
+                {server.get('rules')?.map(rule => (
                   <li key={rule.get('id')}>
                     <span className='rules-list__text'>{rule.get('text')}</span>
                   </li>
