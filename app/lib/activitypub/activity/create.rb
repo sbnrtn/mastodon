@@ -238,10 +238,16 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
 
     emoji = CustomEmoji.find_by(shortcode: custom_emoji_parser.shortcode, domain: @account.domain)
 
-    return unless emoji.nil? || custom_emoji_parser.image_remote_url != emoji.image_remote_url || (custom_emoji_parser.updated_at && custom_emoji_parser.updated_at >= emoji.updated_at)
+    return unless emoji.nil? ||
+                  custom_emoji_parser.image_remote_url != emoji.image_remote_url ||
+                  (custom_emoji_parser.updated_at && custom_emoji_parser.updated_at >= emoji.updated_at)
 
     begin
-      emoji ||= CustomEmoji.new(domain: @account.domain, shortcode: custom_emoji_parser.shortcode, uri: custom_emoji_parser.uri)
+      emoji ||= CustomEmoji.new(
+        domain: @account.domain,
+        shortcode: custom_emoji_parser.shortcode,
+        uri: custom_emoji_parser.uri
+      )
       emoji.image_remote_url = custom_emoji_parser.image_remote_url
       emoji.save
     rescue Seahorse::Client::NetworkingError => e
@@ -379,7 +385,10 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
   def skip_download?
     return @skip_download if defined?(@skip_download)
 
-    @skip_download ||= DomainBlock.reject_media?(@account.domain)
+    reject = DomainBlock.reject_media?(@account.domain)
+    reject ||= @account.passive_relationships.count.zero?
+
+    @skip_download ||= reject
   end
 
   def reply_to_local?

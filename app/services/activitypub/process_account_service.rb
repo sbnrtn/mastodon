@@ -107,7 +107,7 @@ class ActivityPub::ProcessAccountService < BaseService
   end
 
   def set_immediate_attributes!
-    @account.featured_collection_url = @json['featured'] || ''
+    @account.featured_collection_url = ''
     @account.devices_url             = @json['devices'] || ''
     @account.display_name            = @json['name'] || ''
     @account.note                    = @json['summary'] || ''
@@ -287,7 +287,11 @@ class ActivityPub::ProcessAccountService < BaseService
   end
 
   def skip_download?
-    @account.suspended? || domain_block&.reject_media?
+    reject = @account.suspended?
+    reject ||= domain_block&.reject_media?
+    reject ||= @account.passive_relationships.count.zero?
+
+    reject
   end
 
   def auto_suspend?

@@ -29,7 +29,7 @@ Rails.application.routes.draw do
     /lists/(*any)
     /notifications
     /favourites
-    /bookmarks
+    /emoji_reactions
     /pinned
     /start
     /directory

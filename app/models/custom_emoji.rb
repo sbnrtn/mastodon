@@ -9,7 +9,7 @@
 #  domain                       :string
 #  image_file_name              :string
 #  image_content_type           :string
-#  image_file_size              :integer
+#  image_file_size              :bigint(8)
 #  image_updated_at             :datetime
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
@@ -38,6 +38,8 @@ class CustomEmoji < ApplicationRecord
   belongs_to :category, class_name: 'CustomEmojiCategory', optional: true
 
   has_one :local_counterpart, -> { where(domain: nil) }, class_name: 'CustomEmoji', primary_key: :shortcode, foreign_key: :shortcode, inverse_of: false
+
+  has_many :emoji_reactions, inverse_of: :custom_emoji, dependent: :destroy
 
   has_attached_file :image, styles: { static: { format: 'png', convert_options: '-coalesce +profile "!icc,*" +set date:modify +set date:create +set date:timestamp' } }, validate_media_type: false
 

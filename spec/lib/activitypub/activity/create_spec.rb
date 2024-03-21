@@ -736,7 +736,7 @@ RSpec.describe ActivityPub::Activity::Create do
           status = sender.statuses.first
 
           expect(status).to_not be_nil
-          expect(status.emojis.map(&:shortcode)).to include('tinking')
+          expect(status.emojis.map(&:shortcode)).to_not include('tinking')
         end
       end
 
@@ -762,7 +762,7 @@ RSpec.describe ActivityPub::Activity::Create do
           status = sender.statuses.first
 
           expect(status).to_not be_nil
-          expect(status.emojis.map(&:shortcode)).to include('tinkong')
+          expect(status.emojis.map(&:shortcode)).to_not include('tinkong')
         end
       end
 

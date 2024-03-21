@@ -13,6 +13,7 @@ import { PERMISSION_MANAGE_USERS, PERMISSION_MANAGE_FEDERATION } from 'mastodon/
 import { IconButton } from '../../../components/icon_button';
 import DropdownMenuContainer from '../../../containers/dropdown_menu_container';
 import { me } from '../../../initial_state';
+import EmojiPickerDropdown from '../../compose/containers/emoji_picker_dropdown_container';
 
 const messages = defineMessages({
   delete: { id: 'status.delete', defaultMessage: 'Delete' },
@@ -46,6 +47,7 @@ const messages = defineMessages({
   unmute: { id: 'account.unmute', defaultMessage: 'Unmute @{name}' },
   unblock: { id: 'account.unblock', defaultMessage: 'Unblock @{name}' },
   openOriginalPage: { id: 'account.open_original_page', defaultMessage: 'Open original page' },
+  pickEmoji: { id: 'status.emoji_reaction.pick', defaultMessage: 'Pick emoji' },
 });
 
 const mapStateToProps = (state, { status }) => ({
@@ -65,6 +67,7 @@ class ActionBar extends PureComponent {
     onReply: PropTypes.func.isRequired,
     onReblog: PropTypes.func.isRequired,
     onFavourite: PropTypes.func.isRequired,
+    onEmojiReact: PropTypes.func.isRequired,
     onBookmark: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
     onEdit: PropTypes.func.isRequired,
@@ -169,6 +172,7 @@ class ActionBar extends PureComponent {
 
   handleShare = () => {
     navigator.share({
+      text: this.props.status.get('search_index'),
       url: this.props.status.get('url'),
     });
   };
@@ -181,6 +185,12 @@ class ActionBar extends PureComponent {
     const url = this.props.status.get('url');
     navigator.clipboard.writeText(url);
   };
+
+  handleEmojiPick = (data) => {
+    this.props.onEmojiReact(this.props.status, data);
+  };
+
+  handleEmojiPickInnerButton = () => {};
 
   render () {
     const { status, relationship, intl } = this.props;
@@ -286,6 +296,12 @@ class ActionBar extends PureComponent {
     } else {
       reblogTitle = intl.formatMessage(messages.cannot_reblog);
     }
+    const emojiPickerButton = (
+      <IconButton icon='plus' onClick={this.handleEmojiPickInnerButton} title={intl.formatMessage(messages.pickEmoji)} />
+    );
+    const emojiPickerDropdown = (
+      <div className='detailed-status__button'><EmojiPickerDropdown onPickEmoji={this.handleEmojiPick} button={emojiPickerButton} /></div>
+    );
 
     return (
       <div className='detailed-status__action-bar'>
@@ -293,6 +309,7 @@ class ActionBar extends PureComponent {
         <div className='detailed-status__button'><IconButton className={classNames({ reblogPrivate })} disabled={!publicStatus && !reblogPrivate} active={status.get('reblogged')} title={reblogTitle} icon='retweet' onClick={this.handleReblogClick} /></div>
         <div className='detailed-status__button'><IconButton className='star-icon' animate active={status.get('favourited')} title={intl.formatMessage(messages.favourite)} icon='star' onClick={this.handleFavouriteClick} /></div>
         <div className='detailed-status__button'><IconButton className='bookmark-icon' disabled={!signedIn} active={status.get('bookmarked')} title={intl.formatMessage(messages.bookmark)} icon='bookmark' onClick={this.handleBookmarkClick} /></div>
+        {emojiPickerDropdown}
 
         <div className='detailed-status__action-bar-dropdown'>
           <DropdownMenuContainer size={18} icon='ellipsis-h' status={status} items={menu} direction='left' title={intl.formatMessage(messages.more)} />

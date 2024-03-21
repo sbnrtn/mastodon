@@ -279,7 +279,7 @@ describe ApplicationHelper do
 
     it 'returns an at icon for a direct visible status' do
       result = helper.visibility_icon Status.new(visibility: 'direct')
-      expect(result).to match(/at/)
+      expect(result).to match(/envelope/)
     end
   end
 

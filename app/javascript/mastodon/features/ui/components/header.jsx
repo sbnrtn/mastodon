@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
-import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import { Link, withRouter } from 'react-router-dom';
 
@@ -9,22 +9,8 @@ import { connect } from 'react-redux';
 
 import { openModal } from 'mastodon/actions/modal';
 import { fetchServer } from 'mastodon/actions/server';
-import { Avatar } from 'mastodon/components/avatar';
-import { Icon } from 'mastodon/components/icon';
 import { WordmarkLogo, SymbolLogo } from 'mastodon/components/logo';
-import { registrationsOpen, me, sso_redirect } from 'mastodon/initial_state';
-
-const Account = connect(state => ({
-  account: state.getIn(['accounts', me]),
-}))(({ account }) => (
-  <Link to={`/@${account.get('acct')}`} title={account.get('acct')}>
-    <Avatar account={account} size={35} />
-  </Link>
-));
-
-const messages = defineMessages({
-  search: { id: 'navigation_bar.search', defaultMessage: 'Search' },
-});
+import { registrationsOpen, sso_redirect } from 'mastodon/initial_state';
 
 const mapStateToProps = (state) => ({
   signupUrl: state.getIn(['server', 'server', 'registrations', 'url'], null) || '/auth/sign_up',
@@ -60,16 +46,13 @@ class Header extends PureComponent {
 
   render () {
     const { signedIn } = this.context.identity;
-    const { location, openClosedRegistrationsModal, signupUrl, intl } = this.props;
+    const { openClosedRegistrationsModal, signupUrl } = this.props;
 
     let content;
 
     if (signedIn) {
       content = (
         <>
-          {location.pathname !== '/search' && <Link to='/search' className='button button-secondary' aria-label={intl.formatMessage(messages.search)}><Icon id='search' /></Link>}
-          {location.pathname !== '/publish' && <Link to='/publish' className='button button-secondary'><FormattedMessage id='compose_form.publish_form' defaultMessage='New post' /></Link>}
-          <Account />
         </>
       );
     } else {

@@ -737,6 +737,7 @@ ja:
         desc_html: この設定を自分で変更していない全ユーザーに影響します
         title: デフォルトで検索エンジンによるインデックスを拒否する
       discovery:
+        emoji_reactions: スタンプ
         follow_recommendations: おすすめフォロー
         preamble: Mastodon を知らないユーザーを取り込むには、興味深いコンテンツを浮上させることが重要です。サーバー上で様々なディスカバリー機能がどのように機能するかを制御します。
         profile_directory: ディレクトリ
@@ -1425,6 +1426,10 @@ ja:
       body: "%{name}さんにお気に入り登録された、あなたの投稿があります:"
       subject: "%{name}さんにお気に入りに登録されました"
       title: 新たなお気に入り登録
+    emoji_reaction:
+      body: "%{name}さんにスタンプをつけられた、あなたの投稿があります:"
+      subject: "%{name}さんにスタンプをつけられました"
+      title: 新たなスタンプ
     follow:
       body: "%{name}さんにフォローされています！"
       subject: "%{name}さんにフォローされています"
@@ -1507,6 +1512,9 @@ ja:
     title: プライバシーポリシー
   reactions:
     errors:
+      banned: 指定ユーザーからのリアクションは禁止されています
+      disabled: このサーバーではスタンプ機能は無効になっています
+      duplication: 同じリアクションを複数行おうとしました
       limit_reached: リアクションの種類が上限に達しました
       unrecognized_emoji: は絵文字として認識されていません
   relationships:
@@ -1649,8 +1657,11 @@ ja:
     title: '%{name}: "%{quote}"'
     visibilities:
       direct: ダイレクト
+      direct_long: ダイレクト
       private: フォロワー限定
       private_long: フォロワーにのみ表示されます
+      limitedprofile: プロフィールのみ
+      limitedprofile_long: プロフィールにのみ表示されます
       public: 公開
       public_long: 誰でも見ることができ、かつ公開タイムラインに表示されます
       unlisted: 未収載

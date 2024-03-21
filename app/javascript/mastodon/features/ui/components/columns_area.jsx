@@ -6,6 +6,8 @@ import ImmutablePureComponent from 'react-immutable-pure-component';
 
 import { supportsPassiveEvents } from 'detect-passive-events';
 
+import ComposeFormContainer from 'mastodon/features/compose/containers/compose_form_container';
+
 import { scrollRight } from '../../../scroll';
 import BundleContainer from '../containers/bundle_container';
 import {
@@ -47,6 +49,7 @@ export default class ColumnsArea extends ImmutablePureComponent {
 
   static contextTypes = {
     router: PropTypes.object.isRequired,
+    identity: PropTypes.object.isRequired,
   };
 
   static propTypes = {
@@ -140,6 +143,7 @@ export default class ColumnsArea extends ImmutablePureComponent {
   render () {
     const { columns, children, singleColumn, isModalOpen } = this.props;
     const { renderComposePanel } = this.state;
+    const { signedIn } = this.context.identity;
 
     if (singleColumn) {
       return (
@@ -151,6 +155,9 @@ export default class ColumnsArea extends ImmutablePureComponent {
           </div>
 
           <div className='columns-area__panels__main'>
+            {signedIn && (
+              <ComposeFormContainer singleColumn />
+            )}
             <div className='tabs-bar__wrapper'><div id='tabs-bar__portal' /></div>
             <div className='columns-area columns-area--mobile'>{children}</div>
           </div>

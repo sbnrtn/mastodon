@@ -4,17 +4,22 @@
 #
 # Table name: status_stats
 #
-#  id               :bigint(8)        not null, primary key
-#  status_id        :bigint(8)        not null
-#  replies_count    :bigint(8)        default(0), not null
-#  reblogs_count    :bigint(8)        default(0), not null
-#  favourites_count :bigint(8)        default(0), not null
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
+#  id                            :bigint(8)        not null, primary key
+#  status_id                     :bigint(8)        not null
+#  replies_count                 :bigint(8)        default(0), not null
+#  reblogs_count                 :bigint(8)        default(0), not null
+#  favourites_count              :bigint(8)        default(0), not null
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  emoji_reactions               :string
+#  emoji_reactions_count         :integer          default(0), not null
+#  emoji_reaction_accounts_count :integer          default(0), not null
 #
 
 class StatusStat < ApplicationRecord
   belongs_to :status, inverse_of: :status_stat
+
+  after_commit :reset_parent_cache
 
   def replies_count
     [attributes['replies_count'], 0].max
@@ -26,5 +31,23 @@ class StatusStat < ApplicationRecord
 
   def favourites_count
     [attributes['favourites_count'], 0].max
+  end
+
+  def emoji_reactions
+    attributes['emoji_reactions'] || ''
+  end
+
+  def emoji_reactions_count
+    [attributes['emoji_reactions_count'], 0].max
+  end
+
+  def emoji_reaction_accounts_count
+    [attributes['emoji_reaction_accounts_count'], 0].max
+  end
+
+  private
+
+  def reset_parent_cache
+    Rails.cache.delete("statuses/#{status_id}")
   end
 end

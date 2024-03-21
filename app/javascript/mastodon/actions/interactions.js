@@ -15,6 +15,10 @@ export const FAVOURITE_REQUEST = 'FAVOURITE_REQUEST';
 export const FAVOURITE_SUCCESS = 'FAVOURITE_SUCCESS';
 export const FAVOURITE_FAIL    = 'FAVOURITE_FAIL';
 
+export const EMOJIREACT_REQUEST = 'EMOJIREACT_REQUEST';
+export const EMOJIREACT_SUCCESS = 'EMOJIREACT_SUCCESS';
+export const EMOJIREACT_FAIL    = 'EMOJIREACT_FAIL';
+
 export const UNREBLOG_REQUEST = 'UNREBLOG_REQUEST';
 export const UNREBLOG_SUCCESS = 'UNREBLOG_SUCCESS';
 export const UNREBLOG_FAIL    = 'UNREBLOG_FAIL';
@@ -23,6 +27,10 @@ export const UNFAVOURITE_REQUEST = 'UNFAVOURITE_REQUEST';
 export const UNFAVOURITE_SUCCESS = 'UNFAVOURITE_SUCCESS';
 export const UNFAVOURITE_FAIL    = 'UNFAVOURITE_FAIL';
 
+export const UNEMOJIREACT_REQUEST = 'UNEMOJIREACT_REQUEST';
+export const UNEMOJIREACT_SUCCESS = 'UNEMOJIREACT_SUCCESS';
+export const UNEMOJIREACT_FAIL    = 'UNEMOJIREACT_FAIL';
+
 export const REBLOGS_FETCH_REQUEST = 'REBLOGS_FETCH_REQUEST';
 export const REBLOGS_FETCH_SUCCESS = 'REBLOGS_FETCH_SUCCESS';
 export const REBLOGS_FETCH_FAIL    = 'REBLOGS_FETCH_FAIL';
@@ -30,6 +38,13 @@ export const REBLOGS_FETCH_FAIL    = 'REBLOGS_FETCH_FAIL';
 export const FAVOURITES_FETCH_REQUEST = 'FAVOURITES_FETCH_REQUEST';
 export const FAVOURITES_FETCH_SUCCESS = 'FAVOURITES_FETCH_SUCCESS';
 export const FAVOURITES_FETCH_FAIL    = 'FAVOURITES_FETCH_FAIL';
+export const EMOJI_REACTIONS_FETCH_REQUEST = 'EMOJI_REACTIONS_FETCH_REQUEST';
+export const EMOJI_REACTIONS_FETCH_SUCCESS = 'EMOJI_REACTIONS_FETCH_SUCCESS';
+export const EMOJI_REACTIONS_FETCH_FAIL    = 'EMOJI_REACTIONS_FETCH_FAIL';
+
+export const EMOJI_REACTIONS_EXPAND_REQUEST = 'EMOJI_REACTIONS_EXPAND_REQUEST';
+export const EMOJI_REACTIONS_EXPAND_SUCCESS = 'EMOJI_REACTIONS_EXPAND_SUCCESS';
+export const EMOJI_REACTIONS_EXPAND_FAIL    = 'EMOJI_REACTIONS_EXPAND_FAIL';
 
 export const FAVOURITES_EXPAND_REQUEST = 'FAVOURITES_EXPAND_REQUEST';
 export const FAVOURITES_EXPAND_SUCCESS = 'FAVOURITES_EXPAND_SUCCESS';
@@ -200,6 +215,91 @@ export function unfavouriteFail(status, error) {
   return {
     type: UNFAVOURITE_FAIL,
     status: status,
+    error: error,
+    skipLoading: true,
+  };
+}
+
+export function emojiReact(status, emoji) {
+  return function (dispatch, getState) {
+    dispatch(emojiReactRequest(status, emoji));
+
+    const api_emoji = typeof emoji !== 'string' ? (emoji.custom ? (emoji.name + (emoji.domain || '')) : emoji.native) : emoji;
+
+    api(getState).post(`/api/v1/statuses/${status.get('id')}/emoji_reactions`, { emoji: api_emoji }).then(function (response) {
+      dispatch(importFetchedStatus(response.data));
+      dispatch(emojiReactSuccess(status, emoji));
+    }).catch(function (error) {
+      dispatch(emojiReactFail(status, emoji, error));
+    });
+  };
+}
+
+export function unEmojiReact(status, emoji) {
+  return (dispatch, getState) => {
+    dispatch(unEmojiReactRequest(status, emoji));
+
+    api(getState).post(`/api/v1/statuses/${status.get('id')}/emoji_unreaction`, { emoji }).then((response) => {
+      // TODO: do not update because this api has a bug
+      dispatch(importFetchedStatus(response.data));
+      dispatch(unEmojiReactSuccess(status, emoji));
+    }).catch(error => {
+      dispatch(unEmojiReactFail(status, emoji, error));
+    });
+  };
+}
+
+export function emojiReactRequest(status, emoji) {
+  return {
+    type: EMOJIREACT_REQUEST,
+    status: status,
+    emoji: emoji,
+    skipLoading: true,
+  };
+}
+
+export function emojiReactSuccess(status, emoji) {
+  return {
+    type: EMOJIREACT_SUCCESS,
+    status: status,
+    emoji: emoji,
+    skipLoading: true,
+  };
+}
+
+export function emojiReactFail(status, emoji, error) {
+  return {
+    type: EMOJIREACT_FAIL,
+    status: status,
+    emoji: emoji,
+    error: error,
+    skipLoading: true,
+  };
+}
+
+export function unEmojiReactRequest(status, emoji) {
+  return {
+    type: UNEMOJIREACT_REQUEST,
+    status: status,
+    emoji: emoji,
+    skipLoading: true,
+  };
+}
+
+export function unEmojiReactSuccess(status, emoji) {
+  return {
+    type: UNEMOJIREACT_SUCCESS,
+    status: status,
+    emoji: emoji,
+    skipLoading: true,
+  };
+}
+
+export function unEmojiReactFail(status, emoji, error) {
+  return {
+    type: UNEMOJIREACT_FAIL,
+    status: status,
+    emoji: emoji,
     error: error,
     skipLoading: true,
   };

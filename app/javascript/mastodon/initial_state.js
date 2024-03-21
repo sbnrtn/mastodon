@@ -56,6 +56,7 @@
  * @property {string=} disabled_account_id
  * @property {string} display_media
  * @property {string} domain
+ * @property {boolean} enable_emoji_reaction
  * @property {boolean=} expand_spoilers
  * @property {boolean} limited_federation_mode
  * @property {string} locale
@@ -70,6 +71,7 @@
  * @property {boolean} search_enabled
  * @property {boolean} trends_enabled
  * @property {boolean} single_user_mode
+ * @property {boolean} show_emoji_reaction_on_timeline
  * @property {string} source_url
  * @property {string} streaming_api_base_url
  * @property {boolean} timeline_preview
@@ -117,6 +119,7 @@ export const disableSwiping = getMeta('disable_swiping');
 export const disabledAccountId = getMeta('disabled_account_id');
 export const displayMedia = getMeta('display_media');
 export const domain = getMeta('domain');
+export const enableEmojiReaction = getMeta('enable_emoji_reaction');
 export const expandSpoilers = getMeta('expand_spoilers');
 export const forceSingleColumn = !getMeta('advanced_layout');
 export const limitedFederationMode = getMeta('limited_federation_mode');
@@ -132,6 +135,7 @@ export const searchEnabled = getMeta('search_enabled');
 export const trendsEnabled = getMeta('trends_enabled');
 export const showTrends = getMeta('show_trends');
 export const singleUserMode = getMeta('single_user_mode');
+export const showEmojiReactionOnTimeline = getMeta('show_emoji_reaction_on_timeline');
 export const source_url = getMeta('source_url');
 export const timelinePreview = getMeta('timeline_preview');
 export const title = getMeta('title');

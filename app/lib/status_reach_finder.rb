@@ -13,6 +13,14 @@ class StatusReachFinder
     (reached_account_inboxes + followers_inboxes + relay_inboxes).uniq
   end
 
+  def inboxes_for_misskey
+    if banned_domains_for_misskey.empty?
+      []
+    else
+      (reached_account_inboxes_for_misskey + followers_inboxes_for_misskey).uniq
+    end
+  end
+
   private
 
   def reached_account_inboxes
@@ -38,6 +46,16 @@ class StatusReachFinder
         arr.compact!
         arr.uniq!
       end
+    end
+  end
+
+  def reached_account_inboxes_for_misskey
+    if @status.reblog?
+      []
+    elsif @status.limited_visibility?
+      Account.where(id: mentioned_account_ids).where(domain: banned_domains_for_misskey).inboxes
+    else
+      Account.where(id: reached_account_ids).where(domain: banned_domains_for_misskey - friend_domains).inboxes
     end
   end
 
@@ -78,6 +96,16 @@ class StatusReachFinder
     end
   end
 
+  def followers_inboxes_for_misskey
+    if @status.in_reply_to_local_account? && distributable?
+      @status.account.followers.or(@status.thread.account.followers.not_domain_blocked_by_account(@status.account)).where(domain: banned_domains_for_misskey - friend_domains).inboxes
+    elsif @status.direct_visibility? || @status.limited_visibility?
+      []
+    else
+      @status.account.followers.where(domain: banned_domains_for_misskey - friend_domains).inboxes
+    end
+  end
+
   def relay_inboxes
     if @status.public_visibility?
       Relay.enabled.pluck(:inbox_url)
@@ -92,5 +120,24 @@ class StatusReachFinder
 
   def unsafe?
     @options[:unsafe]
+  end
+
+  def banned_domains_for_misskey
+    return @banned_domains_for_misskey if @banned_domains_for_misskey
+
+    return @banned_domains_for_misskey = [] unless @status.unlisted_visibility?
+
+    domains = banned_domains_for_misskey_of_status(@status)
+    domains += banned_domains_for_misskey_of_status(@status.reblog) if @status.reblog? && @status.reblog.local?
+    @banned_domains_for_misskey = domains.uniq
+  end
+
+  def banned_domains_for_misskey_of_status(status)
+    return [] if status.public_searchability?
+    return [] unless status.unlisted_visibility
+
+    from_info = InstanceInfo.where(software: %w(misskey calckey cherrypick)).pluck(:domain)
+    from_domain_block = DomainBlock.where(detect_invalid_subscription: true).pluck(:domain)
+    (from_info + from_domain_block).uniq
   end
 end

@@ -85,9 +85,11 @@ class NavigationPanel extends Component {
           </>
         )}
 
-        {trendsEnabled ? (
+        {signedIn && trendsEnabled && (
           <ColumnLink transparent to='/explore' icon='hashtag' text={intl.formatMessage(messages.explore)} />
-        ) : (
+        )}
+
+        {signedIn && (
           <ColumnLink transparent to='/search' icon='search' text={intl.formatMessage(messages.search)} />
         )}
 

@@ -87,9 +87,12 @@ const messages = defineMessages({
   saved: { id: 'compose.saved.body', defaultMessage: 'Post saved.' },
 });
 
-export const ensureComposeIsVisible = (getState, routerHistory) => {
+export const ensureComposeIsVisible = (
+  getState,
+  routerHistory // eslint-disable-line  @typescript-eslint/no-unused-vars
+) => {
   if (!getState().getIn(['compose', 'mounted'])) {
-    routerHistory.push('/publish');
+    // routerHistory.push('/publish');
   }
 };
 

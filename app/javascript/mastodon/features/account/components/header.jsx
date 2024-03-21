@@ -4,7 +4,6 @@ import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
-import { NavLink } from 'react-router-dom';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
@@ -12,10 +11,8 @@ import ImmutablePureComponent from 'react-immutable-pure-component';
 import { Avatar } from 'mastodon/components/avatar';
 import { Badge, AutomatedBadge, GroupBadge } from 'mastodon/components/badge';
 import Button from 'mastodon/components/button';
-import { FollowersCounter, FollowingCounter, StatusesCounter } from 'mastodon/components/counters';
 import { Icon }  from 'mastodon/components/icon';
 import { IconButton } from 'mastodon/components/icon_button';
-import { ShortNumber } from 'mastodon/components/short_number';
 import DropdownMenuContainer from 'mastodon/containers/dropdown_menu_container';
 import { autoPlayGif, me, domain } from 'mastodon/initial_state';
 import { PERMISSION_MANAGE_USERS, PERMISSION_MANAGE_FEDERATION } from 'mastodon/permissions';
@@ -455,28 +452,6 @@ class Header extends ImmutablePureComponent {
                 </div>
               </div>
 
-              <div className='account__header__extra__links'>
-                <NavLink isActive={this.isStatusesPageActive} activeClassName='active' to={`/@${account.get('acct')}`} title={intl.formatNumber(account.get('statuses_count'))}>
-                  <ShortNumber
-                    value={account.get('statuses_count')}
-                    renderer={StatusesCounter}
-                  />
-                </NavLink>
-
-                <NavLink exact activeClassName='active' to={`/@${account.get('acct')}/following`} title={intl.formatNumber(account.get('following_count'))}>
-                  <ShortNumber
-                    value={account.get('following_count')}
-                    renderer={FollowingCounter}
-                  />
-                </NavLink>
-
-                <NavLink exact activeClassName='active' to={`/@${account.get('acct')}/followers`} title={intl.formatNumber(account.get('followers_count'))}>
-                  <ShortNumber
-                    value={account.get('followers_count')}
-                    renderer={FollowersCounter}
-                  />
-                </NavLink>
-              </div>
             </div>
           )}
         </div>

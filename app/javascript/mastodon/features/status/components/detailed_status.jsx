@@ -3,12 +3,10 @@ import PropTypes from 'prop-types';
 import { injectIntl, defineMessages, FormattedDate, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
-import { Link } from 'react-router-dom';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 
-import { AnimatedNumber } from 'mastodon/components/animated_number';
 import EditedTimestamp from 'mastodon/components/edited_timestamp';
 import { getHashtagBarForStatus } from 'mastodon/components/hashtag_bar';
 import { Icon }  from 'mastodon/components/icon';
@@ -18,6 +16,7 @@ import { Avatar } from '../../../components/avatar';
 import { DisplayName } from '../../../components/display_name';
 import MediaGallery from '../../../components/media_gallery';
 import StatusContent from '../../../components/status_content';
+import StatusEmojiReactionsBar from '../../../components/status_emoji_reactions_bar';
 import Audio from '../../audio';
 import scheduleIdleTask from '../../ui/util/schedule_idle_task';
 import Video from '../../video';
@@ -27,6 +26,7 @@ import Card from './card';
 const messages = defineMessages({
   public_short: { id: 'privacy.public.short', defaultMessage: 'Public' },
   unlisted_short: { id: 'privacy.unlisted.short', defaultMessage: 'Unlisted' },
+  limitedprofile_short: { id: 'privacy.limitedprofile.short', defaultMessage: 'Limited Profile' },
   private_short: { id: 'privacy.private.short', defaultMessage: 'Followers only' },
   direct_short: { id: 'privacy.direct.short', defaultMessage: 'Mentioned people only' },
 });
@@ -53,6 +53,8 @@ class DetailedStatus extends ImmutablePureComponent {
       available: PropTypes.bool,
     }),
     onToggleMediaVisibility: PropTypes.func,
+    onEmojiReact: PropTypes.func,
+    onUnEmojiReact: PropTypes.func,
   };
 
   state = {
@@ -147,9 +149,6 @@ class DetailedStatus extends ImmutablePureComponent {
 
     let media           = '';
     let applicationLink = '';
-    let reblogLink = '';
-    let reblogIcon = 'retweet';
-    let favouriteLink = '';
     let edited = '';
 
     if (this.props.measureHeight) {
@@ -221,6 +220,14 @@ class DetailedStatus extends ImmutablePureComponent {
       media = <Card sensitive={status.get('sensitive')} onOpenMedia={this.props.onOpenMedia} card={status.get('card', null)} />;
     }
 
+    let emojiReactionsBar = null;
+    if (status.get('emoji_reactions')) {
+      const emojiReactions = status.get('emoji_reactions');
+      if (emojiReactions.size > 0 ) {
+        emojiReactionsBar = <StatusEmojiReactionsBar emojiReactions={emojiReactions} status={status} onEmojiReact={this.props.onEmojiReact} onUnEmojiReact={this.props.onUnEmojiReact} />;
+      }
+    }
+
     if (status.get('application')) {
       applicationLink = <> · <a className='detailed-status__application' href={status.getIn(['application', 'website'])} target='_blank' rel='noopener noreferrer'>{status.getIn(['application', 'name'])}</a></>;
     }
@@ -228,60 +235,13 @@ class DetailedStatus extends ImmutablePureComponent {
     const visibilityIconInfo = {
       'public': { icon: 'globe', text: intl.formatMessage(messages.public_short) },
       'unlisted': { icon: 'unlock', text: intl.formatMessage(messages.unlisted_short) },
+      'limitedprofile': { icon: 'user', text: intl.formatMessage(messages.limitedprofile_short) },
       'private': { icon: 'lock', text: intl.formatMessage(messages.private_short) },
-      'direct': { icon: 'at', text: intl.formatMessage(messages.direct_short) },
+      'direct': { icon: 'envelope-o', text: intl.formatMessage(messages.direct_short) },
     };
 
     const visibilityIcon = visibilityIconInfo[status.get('visibility')];
     const visibilityLink = <> · <Icon id={visibilityIcon.icon} title={visibilityIcon.text} /></>;
-
-    if (['private', 'direct'].includes(status.get('visibility'))) {
-      reblogLink = '';
-    } else if (this.context.router) {
-      reblogLink = (
-        <>
-          {' · '}
-          <Link to={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}/reblogs`} className='detailed-status__link'>
-            <Icon id={reblogIcon} />
-            <span className='detailed-status__reblogs'>
-              <AnimatedNumber value={status.get('reblogs_count')} />
-            </span>
-          </Link>
-        </>
-      );
-    } else {
-      reblogLink = (
-        <>
-          {' · '}
-          <a href={`/interact/${status.get('id')}?type=reblog`} className='detailed-status__link' onClick={this.handleModalLink}>
-            <Icon id={reblogIcon} />
-            <span className='detailed-status__reblogs'>
-              <AnimatedNumber value={status.get('reblogs_count')} />
-            </span>
-          </a>
-        </>
-      );
-    }
-
-    if (this.context.router) {
-      favouriteLink = (
-        <Link to={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}/favourites`} className='detailed-status__link'>
-          <Icon id='star' />
-          <span className='detailed-status__favorites'>
-            <AnimatedNumber value={status.get('favourites_count')} />
-          </span>
-        </Link>
-      );
-    } else {
-      favouriteLink = (
-        <a href={`/interact/${status.get('id')}?type=favourite`} className='detailed-status__link' onClick={this.handleModalLink}>
-          <Icon id='star' />
-          <span className='detailed-status__favorites'>
-            <AnimatedNumber value={status.get('favourites_count')} />
-          </span>
-        </a>
-      );
-    }
 
     if (status.get('edited_at')) {
       edited = (
@@ -321,10 +281,12 @@ class DetailedStatus extends ImmutablePureComponent {
 
           {expanded && hashtagBar}
 
+          {emojiReactionsBar}
+
           <div className='detailed-status__meta'>
             <a className='detailed-status__datetime' href={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}`} target='_blank' rel='noopener noreferrer'>
               <FormattedDate value={new Date(status.get('created_at'))} hour12={false} year='numeric' month='short' day='2-digit' hour='2-digit' minute='2-digit' />
-            </a>{edited}{visibilityLink}{applicationLink}{reblogLink} · {favouriteLink}
+            </a>{edited}{visibilityLink}{applicationLink}
           </div>
         </div>
       </div>
