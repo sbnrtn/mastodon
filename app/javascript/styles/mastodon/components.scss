@@ -6300,6 +6300,26 @@ a.status-card {
   grid-template-columns: 50% 50%;
   grid-template-rows: 50% 50%;
   gap: 2px;
+
+  &--row3 {
+    grid-template-rows: 34% 33% 33%;
+  }
+
+  &--row4 {
+    grid-template-rows: 25% 25% 25% 25%;
+  }
+
+  &--column3 {
+    grid-template-columns: 33% 34% 33%;
+  }
+
+  &--column4 {
+    grid-template-columns: 25% 25% 25% 25%;
+  }
+
+  &__compact {
+    max-height: 24vh;
+  }
 }
 
 .media-gallery__item {
