@@ -101,6 +101,22 @@ class Item extends PureComponent {
       height = 50;
     }
 
+    if (size === 5 || size === 6 || size === 9 || size === 10 || size === 11 || size === 12) {
+      height = 33;
+    }
+    if (size === 7 || size === 8 || size === 13 || size === 14 || size === 15 || size === 16) {
+      height = 25;
+    }
+    if ((size === 5 && index === 4) || (size === 7 && index === 6)) {
+      width = 100;
+    }
+    if (size === 9) {
+      width = 33;
+    }
+    if (size === 10 || size === 11 || size === 12 || size === 13 || size === 14 || size === 15 || size === 16) {
+      width = 25;
+    }
+
     if (attachment.get('description')?.length > 0) {
       badges.push(<span key='alt' className='media-gallery__gifv__label'>ALT</span>);
     }
@@ -304,13 +320,15 @@ class MediaGallery extends PureComponent {
       style.aspectRatio = '3 / 2';
     }
 
-    const size     = media.take(4).size;
+    const uploadLimit = 16;
+
+    const size     = media.take(uploadLimit).size;
     const uncached = media.every(attachment => attachment.get('type') === 'unknown');
 
     if (this.isFullSizeEligible()) {
       children = <Item standalone autoplay={autoplay} onClick={this.handleClick} attachment={media.get(0)} lang={lang} displayWidth={width} visible={visible} />;
     } else {
-      children = media.take(4).map((attachment, i) => <Item key={attachment.get('id')} autoplay={autoplay} onClick={this.handleClick} attachment={attachment} index={i} lang={lang} size={size} displayWidth={width} visible={visible || uncached} />);
+      children = media.take(uploadLimit).map((attachment, i) => <Item key={attachment.get('id')} autoplay={autoplay} onClick={this.handleClick} attachment={attachment} index={i} lang={lang} size={size} displayWidth={width} visible={visible || uncached} />);
     }
 
     if (uncached) {
@@ -335,8 +353,15 @@ class MediaGallery extends PureComponent {
       );
     }
 
+    const rowClass = (size === 5 || size === 6 || size === 9 || size === 10 || size === 11 || size === 12) ? 'media-gallery--row3' :
+      (size === 7 || size === 8 || size === 13 || size === 14 || size === 15 || size === 16) ? 'media-gallery--row4' :
+      'media-gallery--row2';
+    const columnClass = (size === 9) ? 'media-gallery--column3' :
+      (size === 10 || size === 11 || size === 12 || size === 13 || size === 14 || size === 15 || size === 16) ? 'media-gallery--column4' :
+      'media-gallery--column2';
+
     return (
-      <div className='media-gallery' style={style} ref={this.handleRef}>
+      <div className={classNames('media-gallery', rowClass, columnClass)} style={style} ref={this.handleRef}>
         <div className={classNames('spoiler-button', { 'spoiler-button--minified': visible && !uncached, 'spoiler-button--click-thru': uncached })}>
           {spoilerButton}
         </div>

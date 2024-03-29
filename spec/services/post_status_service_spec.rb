@@ -221,7 +221,7 @@ RSpec.describe PostStatusService, type: :service do
     expect(media.reload.status).to be_nil
   end
 
-  it 'does not allow attaching more than 4 files' do
+  it 'does not allow attaching more than 16 files' do
     account = Fabricate(:account)
 
     expect do
@@ -229,6 +229,18 @@ RSpec.describe PostStatusService, type: :service do
         account,
         text: 'test status update',
         media_ids: [
+          Fabricate(:media_attachment, account: account),
+          Fabricate(:media_attachment, account: account),
+          Fabricate(:media_attachment, account: account),
+          Fabricate(:media_attachment, account: account),
+          Fabricate(:media_attachment, account: account),
+          Fabricate(:media_attachment, account: account),
+          Fabricate(:media_attachment, account: account),
+          Fabricate(:media_attachment, account: account),
+          Fabricate(:media_attachment, account: account),
+          Fabricate(:media_attachment, account: account),
+          Fabricate(:media_attachment, account: account),
+          Fabricate(:media_attachment, account: account),
           Fabricate(:media_attachment, account: account),
           Fabricate(:media_attachment, account: account),
           Fabricate(:media_attachment, account: account),

@@ -28,7 +28,7 @@ class ActivityPub::Activity::Like < ActivityPub::Activity
   end
 
   def process_emoji_reaction
-    return if !@original_status.account.local?
+    return unless @original_status.account.local?
 
     # custom emoji
     emoji = nil
