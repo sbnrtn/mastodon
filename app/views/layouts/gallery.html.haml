@@ -1,0 +1,67 @@
+- content_for :header_tags do
+  = render_initial_state
+  = javascript_pack_tag 'public', crossorigin: 'anonymous'
+
+  %meta{ name: 'robots', content: 'noindex' }/
+
+- content_for :content do
+  .admin-wrapper
+    .sidebar-wrapper
+      .sidebar-wrapper__inner
+        .sidebar
+          - unless @gallery.id.nil?
+            = link_to gallery_path(@gallery.username) do
+              = render_logo
+
+            .sidebar__toggle
+              .sidebar__toggle__logo
+                = link_to gallery_path(@gallery.username) do
+                  = logo_as_symbol(:wordmark)
+
+          .content__heading
+            .center-text
+              = @gallery.name
+
+          - if user_signed_in?
+            %ul
+              %li
+                = link_to gallery_path(current_account.username) do
+                  = fa_icon 'square'
+                  %span TOP
+              - if @gallery.id.nil?
+                %li
+                  = link_to new_gallery_home_path do
+                    = fa_icon 'edit'
+                    %span EDIT GALLERY
+              - else
+                %li
+                  = link_to edit_gallery_home_path(@gallery) do
+                    = fa_icon 'edit'
+                    %span EDIT GALLERY
+                %li
+                  = link_to gallery_categories_path do
+                    = fa_icon 'list'
+                    %span CATEGORY
+              %li
+                = link_to home_path do
+                  = fa_icon 'home'
+                  %span MASTODON
+
+    .content-wrapper
+      .content
+        .content__heading
+          - if content_for?(:heading)
+            = yield :heading
+          - else
+            .content__heading__row
+              - if content_for?(:heading_actions)
+                .content__heading__actions
+                  = yield :heading_actions
+
+        = render 'application/flashes'
+
+        = yield
+
+    .sidebar-wrapper.sidebar-wrapper--empty
+
+= render template: 'layouts/application'

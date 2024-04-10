@@ -1,0 +1,18 @@
+
+- @work.ordered_media_attachments.each do |media|
+  - url = media.remote_url.presence || media.file.url(:original)
+  .gallery-image-wrapper
+    = image_tag url
+
+%div
+  = nl2br @work.text
+
+%hr.spacer/
+
+.content__heading__actions
+  = link_to gallery_path(@gallery.username), class: 'button' do
+    %span TOP
+
+.content__heading__actions
+  = link_to gallery_category_works_path(@gallery.username, @gallery_category), class: 'button' do
+    %span CATEGORY TOP

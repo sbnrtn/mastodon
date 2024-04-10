@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_20_123125) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_31_072926) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -516,6 +516,30 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_20_123125) do
     t.string "languages", array: true
     t.index ["account_id", "target_account_id"], name: "index_follows_on_account_id_and_target_account_id", unique: true
     t.index ["target_account_id"], name: "index_follows_on_target_account_id"
+  end
+
+  create_table "galleries", force: :cascade do |t|
+    t.string "name", default: "", null: false
+    t.text "description", default: "", null: false
+    t.string "image_url"
+    t.bigint "account_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_galleries_on_account_id"
+  end
+
+  create_table "gallery_categories", force: :cascade do |t|
+    t.string "name", default: "", null: false
+    t.text "description"
+    t.integer "order", default: 0, null: false
+    t.integer "view_limit", default: 5, null: false
+    t.integer "visibility", default: 0, null: false
+    t.bigint "gallery_id"
+    t.bigint "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["gallery_id"], name: "index_gallery_categories_on_gallery_id"
+    t.index ["tag_id"], name: "index_gallery_categories_on_tag_id"
   end
 
   create_table "identities", force: :cascade do |t|
@@ -1232,6 +1256,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_20_123125) do
   add_foreign_key "follow_requests", "accounts", name: "fk_76d644b0e7", on_delete: :cascade
   add_foreign_key "follows", "accounts", column: "target_account_id", name: "fk_745ca29eac", on_delete: :cascade
   add_foreign_key "follows", "accounts", name: "fk_32ed1b5560", on_delete: :cascade
+  add_foreign_key "galleries", "accounts"
+  add_foreign_key "gallery_categories", "galleries", on_delete: :cascade
   add_foreign_key "identities", "users", name: "fk_bea040f377", on_delete: :cascade
   add_foreign_key "imports", "accounts", name: "fk_6db1b6e408", on_delete: :cascade
   add_foreign_key "invites", "users", on_delete: :cascade
