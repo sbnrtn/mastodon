@@ -107,7 +107,7 @@ describe Gallery::HomeController do
     let(:gallery) { Fabricate.create(:gallery, account: account) }
     let(:tag) { Fabricate(:tag) }
     let(:gallery_category) { Fabricate(:gallery_category, gallery: gallery, tag: tag, visibility: 2) }
-    let(:status) { Fabricate(:status, account: account) }
+    let(:status) { Fabricate(:status, account: account, ordered_media_attachment_ids: '{1}') }
     let!(:media_attachment) { Fabricate(:media_attachment, account: account, status: status, type: :image) } # rubocop:disable RSpec/LetSetup
 
     context 'when gallery is nil' do

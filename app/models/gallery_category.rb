@@ -29,9 +29,10 @@ class GalleryCategory < ApplicationRecord
 
   def list_works
     account = gallery.account
-    Status.joins(:tags).joins(:media_attachments).group(:id)
+    Status.joins(:tags).eager_load(:media_attachments)
           .where(tags: { id: tag_id }, account: account)
           .where(visibility: [Status.visibilities[:public], Status.visibilities[:unlisted], Status.visibilities[:limitedprofile]])
+          .where.not(ordered_media_attachment_ids: '{}')
   end
 
   class << self
