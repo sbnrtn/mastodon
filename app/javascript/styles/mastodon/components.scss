@@ -6851,6 +6851,62 @@ a.status-card {
   }
 }
 
+.gallery-image-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  img {
+    max-width: $media-modal-media-max-width;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+}
+
+.gallery-work__item {
+  width: 140px;
+  height: 140px;
+  border: 0;
+  box-sizing: border-box;
+  display: block;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 2px;
+
+  &__icons {
+    position: absolute;
+    top: 50%;
+    inset-inline-start: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+  }
+}
+
+.gallery-work__item-thumbnail {
+  display: block;
+  text-decoration: none;
+  color: $secondary-text-color;
+  position: relative;
+  z-index: 1;
+
+  &,
+  img {
+    height: 100%;
+    width: 100%;
+  }
+
+  img {
+    object-fit: cover;
+  }
+}
+
 .notification__filter-bar,
 .account__section-headline {
   background: $ui-base-color;

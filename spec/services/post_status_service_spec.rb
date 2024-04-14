@@ -221,7 +221,7 @@ RSpec.describe PostStatusService, type: :service do
     expect(media.reload.status).to be_nil
   end
 
-  it 'does not allow attaching more than 16 files' do
+  it 'does not allow attaching more than 16 files' do # rubocop:disable RSpec/ExampleLength
     account = Fabricate(:account)
 
     expect do

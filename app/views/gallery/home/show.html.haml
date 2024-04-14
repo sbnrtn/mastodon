@@ -1,0 +1,27 @@
+%p= nl2br @gallery.description
+
+%hr.spacer/
+
+= image_tag @gallery.image_url if @gallery.image_url.present?
+
+%hr.spacer/
+
+- @gallery.gallery_categories.sorted.each do |category|
+  - list_works = category.list_works.limit(category.view_limit)
+
+  - if list_works.present?
+    - next if category.private_visibility? && !user_signed_in?
+
+    %h4= category.name
+    %p= nl2br category.description
+
+    .account-gallery__container
+      = render 'category', category: category, list_works: list_works
+
+      - if category.list_works.length > category.view_limit
+        .gallery-work__item
+          = link_to gallery_category_works_path(@gallery.username, category), class: 'gallery-work__item-thumbnail' do
+            %canvas.media-gallery__preview.gallery-work__preview
+            %span.account-gallery__item__icons
+              %i ALL
+    %hr.spacer/

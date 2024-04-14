@@ -1,0 +1,28 @@
+= render 'shared/error_messages', object: object
+
+.fields-group
+  = f.label :name
+  = f.text_field :name
+
+.fields-group
+  = f.label :description
+  = f.text_area :description, rows: 5
+
+.fields-group
+  = f.label :order
+  = f.number_field :order
+
+.fields-group
+  = f.label :view_limit
+  = f.number_field :view_limit
+
+.fields-group
+  = f.label :visibility
+  = f.input :visibility, collection: GalleryCategory.selectable_visibilities, include_blank: false, selected: f.object.visibility
+
+.fields-group
+  = f.label :tag_id, required: false
+  = f.collection_select :tag_id, Tag.all, :id, :name, include_blank: true
+
+.actions
+  = f.button :button, 'submit', type: :submit

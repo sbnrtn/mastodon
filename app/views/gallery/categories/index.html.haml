@@ -1,0 +1,28 @@
+
+.content__heading__actions
+  = link_to new_gallery_category_path, class: 'button' do
+    %span NEW
+
+%hr.spacer/
+
+.table-wrapper
+  %table.table.inline-table
+    %thead
+      %tr
+        %th NAME
+        %th ORDER
+        %th VIEW_LIMIT
+        %th VISIBILITY
+        %th TAG
+        %th
+    %tbody
+      - @gallery_categories.each do |category|
+        %tr
+          %td= link_to category.name, edit_gallery_category_path(category)
+          %td= category.order
+          %td= category.view_limit
+          %td= category.visibility
+          %td
+            - if category.tag.present?
+              = category.tag.name
+          %td= link_to 'DELETE', gallery_category_path(category), method: :delete, data: { confirm: "delete category?" }

@@ -178,7 +178,8 @@ class SwitchingColumnsArea extends PureComponent {
     }
 
     return (
-      <ColumnsAreaContainer ref={this.setRef} singleColumn={singleColumn}>
+      <ColumnsAreaContainer ref={this.setRef} singleColumn={singleColumn} username={ me ? initialState.accounts[me].username : null }>
+
         <WrappedSwitch>
           {redirect}
 

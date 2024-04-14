@@ -1,0 +1,16 @@
+= render 'shared/error_messages', object: object
+
+.fields-group
+  = f.label :name
+  = f.text_field :name
+
+.fields-group
+  = f.label :description
+  = f.text_area :description, rows: 5
+
+.fields-group
+  = f.label :image_url, required: false
+  = f.text_field :image_url
+
+.actions
+  = f.button :button, 'submit', type: :submit
