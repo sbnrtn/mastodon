@@ -234,6 +234,10 @@ module ApplicationHelper
     EmojiFormatter.new(html, custom_emojis, other_options.merge(animate: prefers_autoplay?)).to_s
   end
 
+  def nl2br(text)
+    sanitize(text).gsub(/\r\n?/, "\n").gsub("\n", '<br>').html_safe # rubocop:disable Rails/OutputSafety
+  end
+
   private
 
   def storage_host_var

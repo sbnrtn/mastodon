@@ -280,11 +280,14 @@ export function submitComposeFail(error) {
 }
 
 export function uploadCompose(files) {
-  return function (dispatch, getState) {
+  return async function (dispatch, getState) {
     const uploadLimit = 16;
     const media = getState().getIn(['compose', 'media_attachments']);
     const pending = getState().getIn(['compose', 'pending_media_attachments']);
     const progress = new Array(files.length).fill(0);
+
+    const fileArray = Array.from(files);
+    fileArray.sort((a, b) => a.name.localeCompare(b.name));
 
     let total = Array.from(files).reduce((a, v) => a + v.size, 0);
 
@@ -300,13 +303,13 @@ export function uploadCompose(files) {
 
     dispatch(uploadComposeRequest());
 
-    for (const [i, file] of Array.from(files).entries()) {
+    for (const [i, file] of fileArray.entries()) {
       if (media.size + i > uploadLimit - 1) break;
 
       const data = new FormData();
       data.append('file', file);
 
-      api(getState).post('/api/v2/media', data, {
+      await api(getState).post('/api/v2/media', data, {
         onUploadProgress: function({ loaded }){
           progress[i] = loaded;
           dispatch(uploadComposeProgress(progress.reduce((a, v) => a + v, 0), total));

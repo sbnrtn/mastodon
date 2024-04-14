@@ -43,6 +43,7 @@ class NavigationPanel extends Component {
 
   static propTypes = {
     intl: PropTypes.object.isRequired,
+    username: PropTypes.string,
   };
 
   isFirehoseActive = (match, location) => {
@@ -50,7 +51,7 @@ class NavigationPanel extends Component {
   };
 
   render () {
-    const { intl } = this.props;
+    const { intl, username } = this.props;
     const { signedIn, disabledAccountId } = this.context.identity;
 
     let banner = undefined;
@@ -80,6 +81,7 @@ class NavigationPanel extends Component {
         {signedIn && (
           <>
             <ColumnLink transparent to='/home' icon='home' text={intl.formatMessage(messages.home)} />
+            <ColumnLink transparent href={`/gallery/@${username}`} icon='square' text='Gallery' />
             <ColumnLink transparent to='/notifications' icon={<NotificationsCounterIcon className='column-link__icon' />} text={intl.formatMessage(messages.notifications)} />
             <FollowRequestsColumnLink />
           </>

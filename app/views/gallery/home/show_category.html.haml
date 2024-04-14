@@ -1,0 +1,13 @@
+- list_works = @gallery_category.list_works
+
+%h4= @gallery_category.name
+%p= nl2br @gallery_category.description
+
+.account-gallery__container
+  = render 'category', category: @gallery_category, list_works: list_works
+
+%hr.spacer/
+
+.content__heading__actions
+  = link_to gallery_path(@gallery.username), class: 'button' do
+    %span TOP

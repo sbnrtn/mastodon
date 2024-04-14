@@ -47,6 +47,17 @@ Rails.application.routes.draw do
 
   root 'home#index'
 
+  constraints(username: %r{[^@/.]+}) do
+    get '/gallery/@:username', to: 'gallery/home#show', as: 'gallery'
+    get '/gallery/@:username/:id', to: 'gallery/home#show_category', as: 'gallery_category_works'
+    get '/gallery/@:username/:category_id/work/:id', to: 'gallery/home#show_work', as: 'gallery_work'
+  end
+
+  namespace :gallery do
+    resources :home, only: [:new, :create, :edit, :update]
+    resources :categories, only: [:index, :new, :create, :edit, :update, :destroy]
+  end
+
   mount LetterOpenerWeb::Engine, at: 'letter_opener' if Rails.env.development?
 
   get 'health', to: 'health#show'
