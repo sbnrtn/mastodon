@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg width="587.00" height="588.00" viewBox="0.00 0.00 587.00 588.00" xmlns="http://www.w3.org/2000/svg">
+<svg width="130" height="130" viewBox="0 0 121 130" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient gradientUnits="userSpaceOnUse" x1="291.378" y1="58.54" x2="291.378" y2="580.89" id="gradient-0" spreadMethod="pad" gradientTransform="matrix(0.991852, 0.127392, -0.128531, 1.000725, 77.036645, -37.540586)">
       <stop offset="0" style="stop-color: rgb(97, 97, 138);"/>
       <stop offset="1" style="stop-color: rgb(10, 13, 50);"/>
     </linearGradient>
   </defs>
-  <g stroke-linecap="round" transform="translate(-18.00, -45.00)" id="nrt">
+  <g stroke-linecap="round" transform="matrix(0.175591, 0, 0, 0.175591, 8.285851, 8.290442)" id="nrt" style="">
     <path d="M524.58,309.65 C498.91,332.07 477.93,354.17 475.34,356.92 C475.34,356.92 485.07,322.44 485.07,322.44 C485.07,322.44 524.79,308.05 524.79,308.05" stroke-opacity="1.00" style="stroke-miterlimit: 9.9; stroke-width: 4px; fill: rgb(123, 122, 149); paint-order: fill; stroke: rgb(174, 174, 221);"/>
     <path d="M498.51,360.48 C498.51,360.48 429.52,402.25 429.52,402.25 C429.52,402.25 469.66,393.03 469.66,393.03 C469.66,393.03 498.58,360.31 498.58,360.31" stroke-opacity="1.00" style="stroke-miterlimit: 8.26; stroke-width: 4px; fill: rgb(123, 122, 149); paint-order: fill; stroke: rgb(174, 174, 221);"/>
     <path d="M444.50,415.50" stroke-width="24.80" stroke-opacity="1.00" stroke-linejoin="round" style="paint-order: fill; stroke: rgb(136, 136, 136);" fill="none"/>
