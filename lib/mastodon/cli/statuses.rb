@@ -71,6 +71,7 @@ module Mastodon::CLI
           AND NOT EXISTS (SELECT 1 FROM mentions WHERE statuses.id = mentions.status_id AND mentions.account_id IN (SELECT accounts.id FROM accounts WHERE domain IS NULL))
           AND NOT EXISTS (SELECT 1 FROM favourites WHERE statuses.id = favourites.status_id AND favourites.account_id IN (SELECT accounts.id FROM accounts WHERE domain IS NULL))
           AND NOT EXISTS (SELECT 1 FROM bookmarks WHERE statuses.id = bookmarks.status_id AND bookmarks.account_id IN (SELECT accounts.id FROM accounts WHERE domain IS NULL))
+          AND NOT EXISTS (SELECT 1 FROM emoji_reactions WHERE statuses.id = emoji_reactions.status_id AND emoji_reactions.account_id IN (SELECT accounts.id FROM accounts WHERE domain IS NULL))
           #{clean_followed_sql}
         SQL
 
