@@ -563,6 +563,7 @@ module Mastodon::CLI
       query = query.where('NOT EXISTS (SELECT 1 FROM mutes WHERE target_account_id = accounts.id)')
       query = query.where('NOT EXISTS (SELECT 1 FROM reports WHERE target_account_id = accounts.id)')
       query = query.where('NOT EXISTS (SELECT 1 FROM follow_requests WHERE account_id = accounts.id OR target_account_id = accounts.id)')
+      query = query.where('NOT EXISTS (SELECT 1 FROM emoji_reactions WHERE account_id = accounts.id)')
 
       _, deleted = parallelize_with_progress(query) do |account|
         next if account.bot? || account.group?
