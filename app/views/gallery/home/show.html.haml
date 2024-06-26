@@ -27,6 +27,7 @@
               %i ALL
     %hr.spacer/
 
-%div
-  %h4 このサイトについて
-  %p.muted-hint= nl2br @gallery.footer
+- if @gallery.footer.present?
+  %div
+    %h4 このサイトについて
+    %p.muted-hint= nl2br @gallery.footer
