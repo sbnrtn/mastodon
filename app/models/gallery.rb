@@ -11,6 +11,7 @@
 #  account_id  :bigint(8)        not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  footer      :text
 #
 class Gallery < ApplicationRecord
   belongs_to :account
@@ -18,6 +19,7 @@ class Gallery < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 60 }
   validates :description, presence: true, length: { maximum: 500 }
+  validates :footer, presence: true, length: { maximum: 500 }
   validates :image_url, url: true, unless: -> { image_url.blank? }
 
   delegate :username, to: :account

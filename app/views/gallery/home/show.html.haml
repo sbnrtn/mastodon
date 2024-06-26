@@ -1,4 +1,5 @@
-%p= nl2br @gallery.description
+%div
+  %p.muted-hint= nl2br @gallery.description
 
 %hr.spacer/
 
@@ -25,3 +26,7 @@
             %span.account-gallery__item__icons
               %i ALL
     %hr.spacer/
+
+%div
+  %h4 このサイトについて
+  %p.muted-hint= nl2br @gallery.footer
