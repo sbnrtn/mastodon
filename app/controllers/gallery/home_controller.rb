@@ -73,6 +73,6 @@ class Gallery::HomeController < ApplicationController
   end
 
   def gallery_params
-    params.require(:gallery).permit(:name, :description, :image_url)
+    params.require(:gallery).permit(:name, :description, :footer, :image_url)
   end
 end
