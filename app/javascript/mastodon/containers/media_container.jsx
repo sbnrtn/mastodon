@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 
 import { fromJS } from 'immutable';
 
+import GalleryWorks from 'mastodon/components/gallery_works';
 import { ImmutableHashtag as Hashtag } from 'mastodon/components/hashtag';
 import MediaGallery from 'mastodon/components/media_gallery';
 import ModalRoot from 'mastodon/components/modal_root';
@@ -15,7 +16,7 @@ import Video from 'mastodon/features/video';
 import { IntlProvider } from 'mastodon/locales';
 import { getScrollbarWidth } from 'mastodon/utils/scrollbar';
 
-const MEDIA_COMPONENTS = { MediaGallery, Video, Card, Poll, Hashtag, Audio };
+const MEDIA_COMPONENTS = { MediaGallery, Video, Card, Poll, Hashtag, Audio, GalleryWorks };
 
 export default class MediaContainer extends PureComponent {
 

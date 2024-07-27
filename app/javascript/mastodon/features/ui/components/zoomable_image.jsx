@@ -414,6 +414,7 @@ class ZoomableImage extends PureComponent {
 
     return (
       <>
+        <div className='galley-alt'>{alt}</div>
         <IconButton
           className={`media-modal__zoom-button ${zoomButtonShouldHide}`}
           title={zoomButtonTitle}

@@ -81,12 +81,12 @@ class MediaModal extends ImmutablePureComponent {
 
   handleKeyDown = (e) => {
     switch(e.key) {
-    case 'ArrowLeft':
+    case 'ArrowRight':
       this.handlePrevClick();
       e.preventDefault();
       e.stopPropagation();
       break;
-    case 'ArrowRight':
+    case 'ArrowLeft':
       this.handleNextClick();
       e.preventDefault();
       e.stopPropagation();
@@ -139,8 +139,8 @@ class MediaModal extends ImmutablePureComponent {
 
     const index = this.getIndex();
 
-    const leftNav  = media.size > 1 && <button tabIndex={0} className='media-modal__nav media-modal__nav--left' onClick={this.handlePrevClick} aria-label={intl.formatMessage(messages.previous)}><Icon id='chevron-left' fixedWidth /></button>;
-    const rightNav = media.size > 1 && <button tabIndex={0} className='media-modal__nav  media-modal__nav--right' onClick={this.handleNextClick} aria-label={intl.formatMessage(messages.next)}><Icon id='chevron-right' fixedWidth /></button>;
+    const leftNav  = media.size > 1 && <button tabIndex={0} className='media-modal__nav media-modal__nav--left' onClick={this.handleNextClick} aria-label={intl.formatMessage(messages.previous)}><Icon id='chevron-left' fixedWidth /></button>;
+    const rightNav = media.size > 1 && <button tabIndex={0} className='media-modal__nav  media-modal__nav--right' onClick={this.handlePrevClick} aria-label={intl.formatMessage(messages.next)}><Icon id='chevron-right' fixedWidth /></button>;
 
     const content = media.map((image) => {
       const width  = image.getIn(['meta', 'original', 'width']) || null;
@@ -225,12 +225,14 @@ class MediaModal extends ImmutablePureComponent {
           {i + 1}
         </button>
       ));
+      pagination = pagination.reverse();
     }
 
     return (
       <div className='modal-root__modal media-modal'>
         <div className='media-modal__closer' role='presentation' onClick={onClose} >
           <ReactSwipeableViews
+            axis={'x-reverse'}
             style={swipeableViewsStyle}
             containerStyle={containerStyle}
             onChangeIndex={this.handleSwipe}

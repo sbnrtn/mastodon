@@ -1,23 +1,8 @@
 - list_works.each do |work|
-
-  - if work.ordered_media_attachments.length > 1
-    - media = work.ordered_media_attachments.first
-    - url = media.remote_url.presence || media.file.url(:small)
-    .gallery-work__item
-      %div
-        = link_to gallery_work_path(category_id: category.id, id: work.id), class: 'gallery-work__item-thumbnail'  do
-          - if work.sensitive?
-            %canvas.media-gallery__preview.gallery-work__preview
-            %span.account-gallery__item__icons
-              %i.fa.fa-eye-slash
-          .media-gallery.media-gallery--row2.media-gallery--column2
-            .media-gallery__item.standalone.media-gallery__item--tall.media-gallery__item--wide
-              = image_tag url
-  - else
-    .gallery-work__item
-      = react_component :media_gallery,
-        sensitive: work.sensitive?,
-        visible: !work.sensitive?,
-        lang: work.language,
-        height: 600,
-        media: work.ordered_media_attachments.map { |a| ActiveModelSerializers::SerializableResource.new(a, serializer: REST::MediaAttachmentSerializer).as_json }
+  .gallery-work__item
+    = react_component :gallery_works,
+      sensitive: work.sensitive?,
+      visible: !work.sensitive?,
+      lang: work.language,
+      height: 600,
+      media: work.ordered_media_attachments.map { |a| ActiveModelSerializers::SerializableResource.new(a, serializer: REST::MediaAttachmentSerializer).as_json }
