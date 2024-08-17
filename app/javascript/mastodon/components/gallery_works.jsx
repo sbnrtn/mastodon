@@ -94,10 +94,6 @@ class Item extends PureComponent {
     let width  = 100;
     let height = 100;
 
-    if (attachment.get('description')?.length > 0) {
-      badges.push(<span key='alt' className='media-gallery__gifv__label'>ALT</span>);
-    }
-
     const description = attachment.getIn(['translation', 'description']) || attachment.get('description');
 
     if (attachment.get('type') === 'image') {
