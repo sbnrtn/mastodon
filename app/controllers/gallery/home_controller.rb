@@ -11,6 +11,7 @@ class Gallery::HomeController < ApplicationController
 
   def show_category
     @gallery_category = @gallery.gallery_categories.find(params[:id])
+    @page_num = params[:page]
     not_found if @gallery_category.private_visibility? && !user_signed_in?
   end
 

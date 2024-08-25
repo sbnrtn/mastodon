@@ -1867,6 +1867,13 @@ a.account__display-name {
   }
 }
 
+.galley-alt {
+  position: absolute;
+  top: 20px;
+  z-index: 100;
+  white-space: pre-wrap;
+}
+
 .zoomable-image {
   position: relative;
   width: 100%;
@@ -5330,6 +5337,12 @@ a.status-card {
     * {
       pointer-events: none;
     }
+  }
+
+  .fa {
+    text-shadow:
+      0 0 3px #fff,
+      0 0 3px #000;
   }
 }
 

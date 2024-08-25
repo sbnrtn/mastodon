@@ -1,10 +1,12 @@
-- list_works = @gallery_category.list_works
+- list_works = @gallery_category.list_works.page(@page_num)
 
 %h4= @gallery_category.name
 %p= nl2br @gallery_category.description
 
 .account-gallery__container
   = render 'category', category: @gallery_category, list_works: list_works
+
+= paginate list_works
 
 %hr.spacer/
 
