@@ -113,7 +113,7 @@ class Item extends PureComponent {
     if (size === 9) {
       width = 33;
     }
-    if (size === 10 || size === 11 || size === 12 || size === 13 || size === 14 || size === 15 || size === 16) {
+    if (size > 9) {
       width = 25;
     }
 
@@ -320,7 +320,7 @@ class MediaGallery extends PureComponent {
       style.aspectRatio = '3 / 2';
     }
 
-    const uploadLimit = 16;
+    const uploadLimit = 24;
 
     const size     = media.take(uploadLimit).size;
     const uncached = media.every(attachment => attachment.get('type') === 'unknown');
@@ -353,12 +353,27 @@ class MediaGallery extends PureComponent {
       );
     }
 
-    const rowClass = (size === 5 || size === 6 || size === 9 || size === 10 || size === 11 || size === 12) ? 'media-gallery--row3' :
-      (size === 7 || size === 8 || size === 13 || size === 14 || size === 15 || size === 16) ? 'media-gallery--row4' :
-      'media-gallery--row2';
-    const columnClass = (size === 9) ? 'media-gallery--column3' :
-      (size === 10 || size === 11 || size === 12 || size === 13 || size === 14 || size === 15 || size === 16) ? 'media-gallery--column4' :
-      'media-gallery--column2';
+    let rowClass = 'media-gallery--row2';
+    if (size === 5 || size === 6 || size === 9 || size === 10 || size === 11 || size === 12) {
+      rowClass = 'media-gallery--row3';
+    }
+    if (size === 7 || size === 8 || size === 13 || size === 14 || size === 15 || size === 16) {
+      rowClass = 'media-gallery--row4';
+    }
+    if (size >= 17) {
+      rowClass = 'media-gallery--row6';
+    }
+
+    let columnClass = 'media-gallery--column2';
+    if (size === 9) {
+      columnClass = 'media-gallery--column3';
+    }
+    if (size === 10 || size === 11 || size === 12 || size === 13 || size === 14 || size === 15 || size === 16) {
+      columnClass = 'media-gallery--column4';
+    }
+    if (size >= 17) {
+      columnClass = 'media-gallery--column4';
+    }
 
     return (
       <div className={classNames('media-gallery', rowClass, columnClass)} style={style} ref={this.handleRef}>
