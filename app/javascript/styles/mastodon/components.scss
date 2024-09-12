@@ -6322,6 +6322,10 @@ a.status-card {
     grid-template-rows: 25% 25% 25% 25%;
   }
 
+  &--row6 {
+    grid-template-rows: auto;
+  }
+
   &--column3 {
     grid-template-columns: 33% 34% 33%;
   }

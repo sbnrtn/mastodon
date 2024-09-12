@@ -281,7 +281,7 @@ export function submitComposeFail(error) {
 
 export function uploadCompose(files) {
   return async function (dispatch, getState) {
-    const uploadLimit = 16;
+    const uploadLimit = 24;
     const media = getState().getIn(['compose', 'media_attachments']);
     const pending = getState().getIn(['compose', 'pending_media_attachments']);
     const progress = new Array(files.length).fill(0);
