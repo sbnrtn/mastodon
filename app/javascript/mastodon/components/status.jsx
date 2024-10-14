@@ -542,7 +542,14 @@ class Status extends ImmutablePureComponent {
       'direct': { icon: 'envelope-o', text: intl.formatMessage(messages.direct_short) },
     };
 
+    const localOnlyIconInfo = {
+      'true': { icon: 'stop', text: '連合オフ' },
+      'false': { icon: 'play', text: '連合オン' },
+    };
+
     const visibilityIcon = visibilityIconInfo[status.get('visibility')];
+
+    const localOnlyIcon = localOnlyIconInfo[status.get('local_only')];
 
     const {statusContentProps, hashtagBar} = getHashtagBarForStatus(status);
     const expanded = !status.get('hidden') || status.get('spoiler_text').length === 0;
@@ -567,6 +574,7 @@ class Status extends ImmutablePureComponent {
             <div onClick={this.handleClick} className='status__info'>
               <a href={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}`} className='status__relative-time' target='_blank' rel='noopener noreferrer'>
                 <span className='status__visibility-icon'><Icon id={visibilityIcon.icon} title={visibilityIcon.text} /></span>
+                <span className='status__visibility-icon'><Icon id={localOnlyIcon.icon} title={localOnlyIcon.text} /></span>
                 <RelativeTimestamp timestamp={status.get('created_at')} />{status.get('edited_at') && <abbr title={intl.formatMessage(messages.edited, { date: intl.formatDate(status.get('edited_at'), { hour12: false, year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }) })}> *</abbr>}
               </a>
 
