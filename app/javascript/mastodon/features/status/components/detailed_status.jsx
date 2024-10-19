@@ -240,8 +240,16 @@ class DetailedStatus extends ImmutablePureComponent {
       'direct': { icon: 'envelope-o', text: intl.formatMessage(messages.direct_short) },
     };
 
+    const localOnlyIconInfo = {
+      'true': { icon: 'stop', text: '連合オフ' },
+      'false': { icon: 'play', text: '連合オン' },
+    };
+
     const visibilityIcon = visibilityIconInfo[status.get('visibility')];
     const visibilityLink = <> · <Icon id={visibilityIcon.icon} title={visibilityIcon.text} /></>;
+
+    const localOnlyIcon = localOnlyIconInfo[status.get('local_only')];
+    const localOnlyLink = <> · <Icon id={localOnlyIcon.icon} title={localOnlyIcon.text} /></>;
 
     if (status.get('edited_at')) {
       edited = (
@@ -286,7 +294,7 @@ class DetailedStatus extends ImmutablePureComponent {
           <div className='detailed-status__meta'>
             <a className='detailed-status__datetime' href={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}`} target='_blank' rel='noopener noreferrer'>
               <FormattedDate value={new Date(status.get('created_at'))} hour12={false} year='numeric' month='short' day='2-digit' hour='2-digit' minute='2-digit' />
-            </a>{edited}{visibilityLink}{applicationLink}
+            </a>{edited}{visibilityLink}{localOnlyLink}{applicationLink}
           </div>
         </div>
       </div>

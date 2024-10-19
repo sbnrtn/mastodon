@@ -52,7 +52,7 @@ class EmojiReactService < BaseService
     return unless status.account.local?
     return if emoji_reaction.remote_custom_emoji?
 
-    ActivityPub::RawDistributionWorker.perform_async(build_json(emoji_reaction), status.account_id)
+    ActivityPub::RawDistributionWorker.perform_async(build_json(emoji_reaction), status.account_id) unless status.local_only?
   end
 
   def write_stream(emoji_reaction)

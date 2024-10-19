@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 
 import { defineMessages, injectIntl } from 'react-intl';
 
@@ -6,11 +7,14 @@ import classNames from 'classnames';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
+import { connect } from 'react-redux';
 
 import { length } from 'stringz';
 
+import { CheckBox } from 'mastodon/components/check_box';
 import { Icon }  from 'mastodon/components/icon';
 
+import { changeComposeLocalOnly } from '../../../actions/compose';
 import AutosuggestInput from '../../../components/autosuggest_input';
 import AutosuggestTextarea from '../../../components/autosuggest_textarea';
 import Button from '../../../components/button';
@@ -71,6 +75,8 @@ class ComposeForm extends ImmutablePureComponent {
     isInReply: PropTypes.bool,
     singleColumn: PropTypes.bool,
     lang: PropTypes.string,
+    local_only: PropTypes.bool,
+    dispatch: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -222,10 +228,16 @@ class ComposeForm extends ImmutablePureComponent {
     this.props.onPickEmoji(position, data, needsSpace);
   };
 
+  handleLocalOnlyChange = () => {
+    const { dispatch, local_only } = this.props;
+    dispatch(changeComposeLocalOnly(!local_only));
+  };
+
   render () {
     const { intl, onPaste, autoFocus } = this.props;
     const { highlighted } = this.state;
     const disabled = this.props.isSubmitting;
+    const { local_only } = this.props;
 
     let publishText = '';
 
@@ -294,6 +306,12 @@ class ComposeForm extends ImmutablePureComponent {
               <PrivacyDropdownContainer disabled={this.props.isEditing} />
               <SpoilerButtonContainer />
               <LanguageDropdown />
+              <div className='character-counter__wrapper'>
+                <CheckBox
+                  checked={local_only}
+                  onChange={this.handleLocalOnlyChange}
+                  label='localOnly' />
+              </div>
             </div>
 
             <div className='character-counter__wrapper'>
@@ -318,4 +336,15 @@ class ComposeForm extends ImmutablePureComponent {
 
 }
 
-export default injectIntl(ComposeForm);
+const mapStateToProps = (state) => ({
+  local_only: state.getIn(['compose', 'local_only']),
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  dispatch,
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(injectIntl(ComposeForm));

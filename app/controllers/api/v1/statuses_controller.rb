@@ -69,7 +69,7 @@ class Api::V1::StatusesController < Api::BaseController
       allowed_mentions: status_params[:allowed_mentions],
       idempotency: request.headers['Idempotency-Key'],
       with_rate_limit: true,
-      local_only: status_params[:visibility] == 'limitedprofile' # TODO: 入力値から切り替え
+      local_only: status_params[:local_only]
     )
 
     render json: @status, serializer: @status.is_a?(ScheduledStatus) ? REST::ScheduledStatusSerializer : REST::StatusSerializer
@@ -137,6 +137,7 @@ class Api::V1::StatusesController < Api::BaseController
       :sensitive,
       :spoiler_text,
       :visibility,
+      :local_only,
       :language,
       :scheduled_at,
       allowed_mentions: [],

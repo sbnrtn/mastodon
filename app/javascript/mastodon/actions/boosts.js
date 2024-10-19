@@ -8,10 +8,12 @@ export function initBoostModal(props) {
     const default_privacy = getState().getIn(['compose', 'default_privacy']);
 
     const privacy = props.status.get('visibility') === 'private' ? 'private' : default_privacy;
+    const local_only = true
 
     dispatch({
       type: BOOSTS_INIT_MODAL,
       privacy,
+      local_only,
     });
 
     dispatch(openModal({

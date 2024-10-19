@@ -123,6 +123,8 @@ class Status < ApplicationRecord
     where('NOT EXISTS (SELECT * FROM statuses_tags forbidden WHERE forbidden.status_id = statuses.id AND forbidden.tag_id IN (?))', tag_ids)
   }
 
+  scope :not_local_only, -> { where(local_only: [false, nil]) }
+
   after_create_commit :trigger_create_webhooks
   after_update_commit :trigger_update_webhooks
 
@@ -137,6 +139,8 @@ class Status < ApplicationRecord
   before_validation :set_visibility
   before_validation :set_conversation
   before_validation :set_local
+
+  before_create :set_local_only
 
   around_create Mastodon::Snowflake::Callbacks
 
@@ -496,6 +500,10 @@ class Status < ApplicationRecord
     self.visibility = reblog.visibility if reblog? && visibility.nil?
     self.visibility = (account.locked? ? :private : :public) if visibility.nil?
     self.sensitive  = false if sensitive.nil?
+  end
+
+  def set_local_only
+    self.local_only = false if account.domain.present?
   end
 
   def set_conversation
