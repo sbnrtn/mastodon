@@ -3,6 +3,7 @@
     = react_component :gallery_works,
       sensitive: work.sensitive?,
       visible: !work.sensitive?,
+      visibility: work.visibility,
       lang: work.language,
       height: 600,
       media: work.ordered_media_attachments.map { |a| ActiveModelSerializers::SerializableResource.new(a, serializer: REST::MediaAttachmentSerializer).as_json }
