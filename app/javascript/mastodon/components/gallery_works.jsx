@@ -32,6 +32,7 @@ class Item extends PureComponent {
     onClick: PropTypes.func.isRequired,
     displayWidth: PropTypes.number,
     visible: PropTypes.bool.isRequired,
+    visibility: PropTypes.string,
     autoplay: PropTypes.bool,
   };
 
@@ -183,6 +184,7 @@ class GalleryWorks extends PureComponent {
     defaultWidth: PropTypes.number,
     cacheWidth: PropTypes.func,
     visible: PropTypes.bool,
+    visibility: PropTypes.string,
     autoplay: PropTypes.bool,
     onToggleVisibility: PropTypes.func,
   };
@@ -255,11 +257,11 @@ class GalleryWorks extends PureComponent {
   }
 
   render () {
-    const { media, lang, intl, sensitive, defaultWidth, autoplay } = this.props;
+    const { media, lang, intl, sensitive, defaultWidth, autoplay, visibility } = this.props;
     const { visible } = this.state;
     const width = this.state.width || defaultWidth;
 
-    let children, spoilerButton;
+    let children, spoilerButton, visibilityButton;
 
     const style = {};
     style.aspectRatio = `${this.props.media.getIn([0, 'meta', 'small', 'aspect'])}`;
@@ -297,6 +299,10 @@ class GalleryWorks extends PureComponent {
       );
     }
 
+    if (visibility === 'private') {
+      visibilityButton = <IconButton title='visibility' icon='lock' overlay onClick={this.handleOpen} ariaHidden />;
+    }
+
     const rowClass = 'media-gallery--row2';
     const columnClass = 'media-gallery--column2';
 
@@ -304,6 +310,9 @@ class GalleryWorks extends PureComponent {
       <div className={classNames('media-gallery', rowClass, columnClass)} style={style} ref={this.handleRef}>
         <div className={classNames('spoiler-button', { 'spoiler-button--minified': visible && !uncached, 'spoiler-button--click-thru': uncached })}>
           {spoilerButton}
+        </div>
+        <div className={classNames('visibility-button', { 'visibility-button--minified': visible && !uncached, 'visibility-button--click-thru': uncached })}>
+          {visibilityButton}
         </div>
 
         {children}

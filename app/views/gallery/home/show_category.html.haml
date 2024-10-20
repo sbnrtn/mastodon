@@ -1,6 +1,9 @@
 - list_works = @gallery_category.list_works.page(@page_num)
 
-%h4= @gallery_category.name
+%h4
+  = @gallery_category.name
+  = fa_icon 'envelope-open' if @gallery_category.public_visibility?
+  = fa_icon 'lock' if @gallery_category.private_visibility?
 %p= nl2br @gallery_category.description
 
 .account-gallery__container

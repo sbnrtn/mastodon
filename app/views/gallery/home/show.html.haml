@@ -13,7 +13,10 @@
   - if list_works.present?
     - next if category.private_visibility? && !user_signed_in?
 
-    %h4= category.name
+    %h4
+      = category.name
+      = fa_icon 'envelope-open' if category.public_visibility?
+      = fa_icon 'lock' if category.private_visibility?
     %p= nl2br category.description
 
     .account-gallery__container
