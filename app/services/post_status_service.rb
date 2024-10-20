@@ -120,7 +120,7 @@ class PostStatusService < BaseService
     Trends.tags.register(@status)
     LinkCrawlWorker.perform_async(@status.id)
     DistributionWorker.perform_async(@status.id)
-    ActivityPub::DistributionWorker.perform_async(@status.id)
+    ActivityPub::DistributionWorker.perform_async(@status.id) unless @status.local_only?
     PollExpirationNotifyWorker.perform_at(@status.poll.expires_at, @status.poll.id) if @status.poll
   end
 
@@ -198,6 +198,7 @@ class PostStatusService < BaseService
       language: valid_locale_cascade(@options[:language], @account.user&.preferred_posting_language, I18n.default_locale),
       application: @options[:application],
       rate_limit: @options[:with_rate_limit],
+      local_only: @options[:local_only],
     }.compact
   end
 

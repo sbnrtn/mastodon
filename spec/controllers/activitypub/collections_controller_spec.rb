@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe ActivityPub::CollectionsController do
   let!(:account) { Fabricate(:account) }
   let!(:private_pinned) { Fabricate(:status, account: account, text: 'secret private stuff', visibility: :private) }
+  let!(:local_only_pinned) { Fabricate(:status, account: account, text: 'secret private stuff', local_only: true) }
   let(:remote_account) { nil }
 
   shared_examples 'cacheable response' do
@@ -29,6 +30,7 @@ RSpec.describe ActivityPub::CollectionsController do
     Fabricate(:status_pin, account: account)
     Fabricate(:status_pin, account: account)
     Fabricate(:status_pin, account: account, status: private_pinned)
+    Fabricate(:status_pin, account: account, status: local_only_pinned)
     Fabricate(:status, account: account, visibility: :private)
   end
 

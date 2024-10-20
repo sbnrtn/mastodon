@@ -55,6 +55,7 @@ export const COMPOSE_SENSITIVITY_CHANGE  = 'COMPOSE_SENSITIVITY_CHANGE';
 export const COMPOSE_SPOILERNESS_CHANGE  = 'COMPOSE_SPOILERNESS_CHANGE';
 export const COMPOSE_SPOILER_TEXT_CHANGE = 'COMPOSE_SPOILER_TEXT_CHANGE';
 export const COMPOSE_VISIBILITY_CHANGE   = 'COMPOSE_VISIBILITY_CHANGE';
+export const COMPOSE_LOCAL_ONLY_CHANGE   = 'COMPOSE_LOCAL_ONLY_CHANGE';
 export const COMPOSE_COMPOSING_CHANGE    = 'COMPOSE_COMPOSING_CHANGE';
 export const COMPOSE_LANGUAGE_CHANGE     = 'COMPOSE_LANGUAGE_CHANGE';
 
@@ -211,6 +212,7 @@ export function submitCompose(routerHistory) {
         visibility: getState().getIn(['compose', 'privacy']),
         poll: getState().getIn(['compose', 'poll'], null),
         language: getState().getIn(['compose', 'language']),
+        local_only: getState().getIn(['compose', 'local_only']),
       },
       headers: {
         'Idempotency-Key': getState().getIn(['compose', 'idempotencyKey']),
@@ -753,6 +755,13 @@ export function changeComposeSpoilerText(text) {
 export function changeComposeVisibility(value) {
   return {
     type: COMPOSE_VISIBILITY_CHANGE,
+    value,
+  };
+}
+
+export function changeComposeLocalOnly(value) {
+  return {
+    type: COMPOSE_LOCAL_ONLY_CHANGE,
     value,
   };
 }

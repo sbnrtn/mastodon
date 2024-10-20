@@ -84,6 +84,12 @@ RSpec.describe StatusPolicy, type: :model do
 
         expect(subject).to_not permit(viewer, status)
       end
+
+      it 'grants access when local-only and the viewer is not logged in' do
+        allow(status).to receive(:local_only?).and_return(true)
+
+        expect(subject).to permit(nil, status)
+      end
     end
   end
 

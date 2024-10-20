@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_06_26_015430) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_15_064219) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -1022,6 +1022,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_26_015430) do
     t.datetime "edited_at", precision: nil
     t.boolean "trendable"
     t.bigint "ordered_media_attachment_ids", array: true
+    t.boolean "local_only", default: false
     t.index ["account_id", "id", "visibility", "updated_at"], name: "index_statuses_20190820", order: { id: :desc }, where: "(deleted_at IS NULL)"
     t.index ["account_id"], name: "index_statuses_on_account_id"
     t.index ["deleted_at"], name: "index_statuses_on_deleted_at", where: "(deleted_at IS NOT NULL)"

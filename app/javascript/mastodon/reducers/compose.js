@@ -31,6 +31,7 @@ import {
   COMPOSE_SPOILERNESS_CHANGE,
   COMPOSE_SPOILER_TEXT_CHANGE,
   COMPOSE_VISIBILITY_CHANGE,
+  COMPOSE_LOCAL_ONLY_CHANGE,
   COMPOSE_LANGUAGE_CHANGE,
   COMPOSE_COMPOSING_CHANGE,
   COMPOSE_EMOJI_INSERT,
@@ -82,6 +83,7 @@ const initialState = ImmutableMap({
   suggestion_token: null,
   suggestions: ImmutableList(),
   default_privacy: 'public',
+  local_onfly: true,
   default_sensitive: false,
   default_language: 'en',
   resetFileKey: Math.floor((Math.random() * 0x10000)),
@@ -122,6 +124,7 @@ function clearAll(state) {
     map.set('is_changing_upload', false);
     map.set('in_reply_to', null);
     map.set('privacy', state.get('default_privacy'));
+    map.set('local_only', true);
     map.set('sensitive', state.get('default_sensitive'));
     map.set('language', state.get('default_language'));
     map.update('media_attachments', list => list.clear());
@@ -318,6 +321,9 @@ export default function compose(state = initialState, action) {
     return state
       .set('privacy', action.value)
       .set('idempotencyKey', uuid());
+  case COMPOSE_LOCAL_ONLY_CHANGE:
+    return state
+      .set('local_only', action.value);
   case COMPOSE_CHANGE:
     return state
       .set('text', action.text)
