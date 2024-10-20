@@ -8,7 +8,7 @@
 %hr.spacer/
 
 - @gallery.gallery_categories.sorted.each do |category|
-  - list_works = category.list_works.limit(category.view_limit)
+  - list_works = category.list_works(logged_in: user_signed_in?).limit(category.view_limit)
 
   - if list_works.present?
     - next if category.private_visibility? && !user_signed_in?
