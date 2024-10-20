@@ -1,4 +1,4 @@
-- list_works = @gallery_category.list_works.page(@page_num)
+- list_works = @gallery_category.list_works(logged_in: user_signed_in?).page(@page_num)
 
 %h4
   = @gallery_category.name

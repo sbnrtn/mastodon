@@ -62,7 +62,22 @@ RSpec.describe Gallery do
       end
     end
 
-    context 'when category is public' do
+    context 'when not logged in' do
+      it 'returns public, unlisted, and limited profile statuses' do
+        results = category.list_works
+        expect(results).to include(public_status, unlisted_status, limited_profile_status)
+        expect(results).to_not include(private_status)
+      end
+    end
+
+    context 'when logged in' do
+      it 'returns all statuses' do
+        results = category.list_works(logged_in: true)
+        expect(results).to include(public_status, unlisted_status, private_status, limited_profile_status)
+      end
+    end
+
+    context 'when category is public and not logged in' do
       before { category.update(visibility: :public) }
 
       it 'returns public, unlisted, and limited profile statuses' do
@@ -72,11 +87,30 @@ RSpec.describe Gallery do
       end
     end
 
-    context 'when category is private' do
+    context 'when category is private and not logged in' do
+      before { category.update(visibility: :private) }
+
+      it 'returns public, unlisted, and limited profile statuses' do
+        results = category.list_works
+        expect(results).to include(public_status, unlisted_status, limited_profile_status)
+        expect(results).to_not include(private_status)
+      end
+    end
+
+    context 'when category is public and logged in' do
+      before { category.update(visibility: :public) }
+
+      it 'returns all statuses' do
+        results = category.list_works(logged_in: true)
+        expect(results).to include(public_status, unlisted_status, private_status, limited_profile_status)
+      end
+    end
+
+    context 'when category is private and logged in' do
       before { category.update(visibility: :private) }
 
       it 'returns all statuses' do
-        results = category.list_works
+        results = category.list_works(logged_in: true)
         expect(results).to include(public_status, unlisted_status, private_status, limited_profile_status)
       end
     end

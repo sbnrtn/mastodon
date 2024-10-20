@@ -27,19 +27,17 @@ class GalleryCategory < ApplicationRecord
 
   scope :sorted, -> { order(order: :asc) }
 
-  def list_works
+  def list_works(logged_in: false)
     account = gallery.account
     statuses = Status.joins(:tags).eager_load(:media_attachments)
                      .where(tags: { id: tag_id }, account: account)
                      .where.not(ordered_media_attachment_ids: '{}')
 
-    if public_visibility?
-      statuses = statuses.where(visibility: [Status.visibilities[:public], Status.visibilities[:unlisted], Status.visibilities[:limitedprofile]])
-    elsif private_visibility?
-      statuses = statuses.where(visibility: [Status.visibilities[:public], Status.visibilities[:unlisted], Status.visibilities[:limitedprofile], Status.visibilities[:private]])
+    if logged_in
+      statuses.where(visibility: [Status.visibilities[:public], Status.visibilities[:unlisted], Status.visibilities[:limitedprofile], Status.visibilities[:private]])
+    else
+      statuses.where(visibility: [Status.visibilities[:public], Status.visibilities[:unlisted], Status.visibilities[:limitedprofile]])
     end
-
-    statuses
   end
 
   class << self
